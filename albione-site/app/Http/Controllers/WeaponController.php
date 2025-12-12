@@ -10,7 +10,8 @@ class WeaponController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Weapon::with(['weaponLine', 'weaponSkill']);
+        $query = Weapon::with(['weaponLine', 'weaponSkill'])
+            ->whereHas('weaponLine', fn ($q) => $q->whereIn('name', WeaponLine::ALLOWED_NAMES));
 
         if ($request->filled('tier')) {
             $query->where('tier', $request->string('tier'));
@@ -23,14 +24,16 @@ class WeaponController extends Controller
         $weapons = $query->orderBy('tier')->orderBy('name')->get();
 
         $tiers = Weapon::select('tier')->distinct()->orderBy('tier')->pluck('tier');
-        $weaponLines = WeaponLine::orderBy('name')->get();
+        $weaponLines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)->orderBy('name')->get();
 
         return view('weapons.index', compact('weapons', 'tiers', 'weaponLines'));
     }
 
     public function show(string $slug)
     {
-        $weapon = Weapon::where('slug', $slug)->firstOrFail();
+        $weapon = Weapon::where('slug', $slug)
+            ->whereHas('weaponLine', fn ($q) => $q->whereIn('name', WeaponLine::ALLOWED_NAMES))
+            ->firstOrFail();
 
         return view('weapons.show', compact('weapon'));
     }

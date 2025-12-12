@@ -9,7 +9,8 @@ class WeaponLineController extends Controller
 {
     public function index()
     {
-        $lines = WeaponLine::with(['weapons' => function ($query) {
+        $lines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)
+            ->with(['weapons' => function ($query) {
             $query->orderBy('tier');
         }])->orderBy('name')->get();
 
@@ -18,7 +19,7 @@ class WeaponLineController extends Controller
 
     public function show(string $slug)
     {
-        $line = WeaponLine::with([
+        $line = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)->with([
             'lineSkills' => fn ($query) => $query->orderByRaw("FIELD(slot, 'Q','W','Passive')")->orderBy('name'),
             'weapons.weaponSkill',
         ])->where('slug', $slug)->firstOrFail();

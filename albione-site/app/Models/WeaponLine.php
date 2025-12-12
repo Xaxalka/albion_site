@@ -9,6 +9,12 @@ class WeaponLine extends Model
 {
     use HasFactory;
 
+    public const ALLOWED_NAMES = [
+        'Warrior Weapons',
+        'Hunter Weapons',
+        'Mage Weapons',
+    ];
+
     protected $fillable = [
         'name',
         'slug',

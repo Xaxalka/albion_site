@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\WeaponLine;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
 class WeaponLineController extends Controller
 {
     public function index()
     {
-        $lines = WeaponLine::orderBy('name')->paginate(10);
+        $lines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)
+            ->orderBy('name')
+            ->paginate(10);
 
         return view('admin.weapon-lines.index', compact('lines'));
     }
@@ -24,7 +27,13 @@ class WeaponLineController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::in(WeaponLine::ALLOWED_NAMES),
+                Rule::unique('weapon_lines', 'name'),
+            ],
             'slug' => ['nullable', 'string', 'max:255', 'unique:weapon_lines,slug'],
             'description' => ['nullable', 'string'],
         ]);
@@ -48,7 +57,13 @@ class WeaponLineController extends Controller
         $line = WeaponLine::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::in(WeaponLine::ALLOWED_NAMES),
+                Rule::unique('weapon_lines', 'name')->ignore($line->id),
+            ],
             'slug' => ['nullable', 'string', 'max:255', 'unique:weapon_lines,slug,' . $line->id],
             'description' => ['nullable', 'string'],
         ]);

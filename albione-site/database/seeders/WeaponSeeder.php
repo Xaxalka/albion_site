@@ -16,8 +16,8 @@ class WeaponSeeder extends Seeder
     {
         $lines = [
             [
-                'name' => 'Sword',
-                'description' => 'Balanced melee line focused on mobility and sustained damage.',
+                'name' => 'Warrior Weapons',
+                'description' => 'Frontline arsenal: swords, maces, axes - built for engage and durability.',
                 'skills' => [
                     ['slot' => 'Q', 'name' => 'Heroic Strike', 'description' => 'Single-target strike building heroism.'],
                     ['slot' => 'W', 'name' => 'Splitting Slash', 'description' => 'Arc slash that slows enemies.'],
@@ -43,8 +43,8 @@ class WeaponSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Bow',
-                'description' => 'Ranged pressure with kiting potential.',
+                'name' => 'Hunter Weapons',
+                'description' => 'Ranged pressure: bows, crossbows, spears with kite and control.',
                 'skills' => [
                     ['slot' => 'Q', 'name' => 'Deadly Shot', 'description' => 'Piercing arrow stacking damage.'],
                     ['slot' => 'W', 'name' => 'Frost Shot', 'description' => 'Jump back and slow enemies.'],
@@ -62,8 +62,8 @@ class WeaponSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Fire Staff',
-                'description' => 'Damage-over-time casters with strong zoning.',
+                'name' => 'Mage Weapons',
+                'description' => 'Magical staves: AoE, damage over time, distance control.',
                 'skills' => [
                     ['slot' => 'Q', 'name' => 'Fire Bolt', 'description' => 'Ranged burning projectile.'],
                     ['slot' => 'W', 'name' => 'Ignite', 'description' => 'Apply burning stacks.'],
