@@ -21,11 +21,30 @@
                     </div>
                     <div class="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
                         @foreach($line->weapons as $weapon)
-                            <span class="rounded bg-indigo-50 px-2 py-1 text-indigo-700">{{ $weapon->name }} ({{ $weapon->tier }})</span>
+                            <span class="rounded bg-indigo-50 px-2 py-1 text-indigo-700">{{ $weapon->name }}</span>
                         @endforeach
                     </div>
                 </article>
             @endforeach
         </div>
+
+        <section class="rounded-lg border border-slate-200 bg-white p-5 space-y-3">
+            <h2 class="text-xl font-semibold text-slate-900">Сетки оружия</h2>
+            <p class="text-sm text-slate-700">Под сетками добавлены быстрые списки основных веток, чтобы было проще ориентироваться между вкладками.</p>
+            <div class="grid md:grid-cols-3 gap-4 text-sm text-slate-700">
+                <div class="space-y-1">
+                    <h3 class="font-semibold text-slate-900">Вкладка воина</h3>
+                    <p class="italic">Арбалеты; Боевые перчатки; Молотки; Булавы; Топоры; Мечи</p>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="font-semibold text-slate-900">Вкладка охотников</h3>
+                    <p class="italic">Луки; Кинжалы; Копья; Шесты; Shapershifts; Друиды</p>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="font-semibold text-slate-900">Вкладка магов</h3>
+                    <p class="italic">Огненные посохи; Священные посохи; Мистические посохи; Морозные посохи; Проклятые посохи</p>
+                </div>
+            </div>
+        </section>
     </div>
 @endsection

@@ -13,20 +13,14 @@ class WeaponController extends Controller
         $query = Weapon::with(['weaponLine', 'weaponSkill'])
             ->whereHas('weaponLine', fn ($q) => $q->whereIn('name', WeaponLine::ALLOWED_NAMES));
 
-        if ($request->filled('tier')) {
-            $query->where('tier', $request->string('tier'));
-        }
-
         if ($request->filled('weapon_line_id')) {
             $query->where('weapon_line_id', $request->integer('weapon_line_id'));
         }
 
-        $weapons = $query->orderBy('tier')->orderBy('name')->get();
-
-        $tiers = Weapon::select('tier')->distinct()->orderBy('tier')->pluck('tier');
+        $weapons = $query->orderBy('name')->get();
         $weaponLines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)->orderBy('name')->get();
 
-        return view('weapons.index', compact('weapons', 'tiers', 'weaponLines'));
+        return view('weapons.index', compact('weapons', 'weaponLines'));
     }
 
     public function show(string $slug)
