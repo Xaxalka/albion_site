@@ -5,13 +5,16 @@ use App\Http\Controllers\Admin\WeaponController as AdminWeaponController;
 use App\Http\Controllers\Admin\WeaponLineController as AdminWeaponLineController;
 use App\Http\Controllers\Admin\WeaponSkillController as AdminWeaponSkillController;
 use App\Http\Controllers\SkillMediaController;
+use App\Http\Controllers\WikiController;
 use App\Http\Controllers\WeaponController;
 use App\Http\Controllers\WeaponLineController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return app(WikiController::class)->index();
 });
+
+Route::get('/wiki', [WikiController::class, 'index'])->name('wiki');
 
 Route::get('/weapon-lines', [WeaponLineController::class, 'index'])->name('weapon-lines.index');
 Route::get('/weapon-lines/{slug}', [WeaponLineController::class, 'show'])->name('weapon-lines.show');
