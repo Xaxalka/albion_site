@@ -140,6 +140,7 @@
             margin-top: 28px;
             justify-items: center;
         }
+        .layout-grid { display: grid; gap: 24px; margin-top: 28px; }
         .sigils {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
