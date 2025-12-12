@@ -134,11 +134,20 @@
         }
         .tab.active::after { opacity: 1; }
         .tab:hover { border-color: var(--gold); transform: translateY(-1px); }
+        .layout-grid {
+            display: grid;
+            gap: 24px;
+            margin-top: 28px;
+            justify-items: center;
+        }
         .layout-grid { display: grid; gap: 24px; margin-top: 28px; }
         .sigils {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
+            width: 100%;
+            max-width: 960px;
+            justify-items: center;
         }
         .sigil-card {
             position: relative;
@@ -148,6 +157,7 @@
             border: 1px solid var(--line);
             box-shadow: 0 14px 30px var(--shadow);
             overflow: hidden;
+            width: 100%;
         }
         .sigil-card::after {
             content: "";
@@ -191,6 +201,9 @@
             border: 1px solid var(--line);
             box-shadow: 0 14px 34px var(--shadow);
             overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            justify-self: center;
         }
         .content-panel::before {
             content: "";
