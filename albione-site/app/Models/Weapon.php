@@ -13,10 +13,18 @@ class Weapon extends Model
         'weapon_line_id',
         'name',
         'slug',
-        'tier',
         'description',
         'author_notes',
         'image',
+        'tier',
+        'enchantment',
+        'item_power',
+        'type',
+    ];
+
+    protected $casts = [
+        'enchantment' => 'integer',
+        'item_power' => 'integer',
     ];
 
     public function weaponLine()

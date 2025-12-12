@@ -34,7 +34,10 @@ return new class extends Migration
             $table->foreignId('weapon_line_id')->constrained('weapon_lines')->cascadeOnDelete();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('tier', 10);
+            $table->enum('tier', ['T4', 'T5', 'T6', 'T7', 'T8']);
+            $table->unsignedTinyInteger('enchantment')->default(0);
+            $table->unsignedSmallInteger('item_power')->default(700);
+            $table->enum('type', ['melee', 'ranged', 'magic'])->default('melee');
             $table->text('description')->nullable();
             $table->text('author_notes')->nullable();
             $table->string('image')->nullable();
