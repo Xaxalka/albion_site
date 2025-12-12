@@ -80,10 +80,10 @@
             line-height: 1.6;
         }
         .tab-bar {
-            margin-top: 8px;
+            margin-top: 12px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(2, minmax(170px, 1fr));
+            gap: 10px;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -91,33 +91,49 @@
             padding: 12px;
             background: linear-gradient(120deg, rgba(13,19,31,0.9), rgba(13,19,31,0.75));
             border: 1px solid var(--line);
-            border-radius: 16px;
+            border-radius: 18px;
             box-shadow: 0 12px 36px var(--shadow);
+            max-width: 560px;
+            width: 100%;
+            justify-self: center;
         }
         .tab {
             border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 12px 16px;
-            background: rgba(16,23,35,0.8);
+            border-radius: 14px;
+            padding: 14px 16px 12px;
+            background: radial-gradient(circle at 20% 18%, rgba(242,200,124,0.08), rgba(16,23,35,0.9));
             color: var(--text);
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.02em;
-            display: inline-flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
             cursor: pointer;
-            transition: 200ms ease;
+            transition: 180ms ease;
             text-align: left;
+            min-height: 78px;
+            position: relative;
+            overflow: hidden;
         }
-        .tab span { color: var(--muted); font-size: 13px; }
+        .tab::after {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.03);
+            opacity: 0;
+            transition: 180ms ease;
+        }
+        .tab span { color: var(--muted); font-size: 13px; font-weight: 600; }
         .tab.active {
             border-color: var(--gold-strong);
-            box-shadow: 0 10px 26px rgba(242,200,124,0.25);
-            background: linear-gradient(140deg, rgba(242,200,124,0.12), rgba(16,23,35,0.95));
+            box-shadow: 0 10px 26px rgba(242,200,124,0.22), 0 0 0 1px rgba(242,200,124,0.2) inset;
+            background: linear-gradient(140deg, rgba(242,200,124,0.18), rgba(16,23,35,0.96));
             color: #fff;
         }
-        .tab:hover { border-color: var(--gold); transform: translateY(-2px); }
+        .tab.active::after { opacity: 1; }
+        .tab:hover { border-color: var(--gold); transform: translateY(-1px); }
         .layout-grid { display: grid; gap: 24px; margin-top: 28px; }
         .sigils {
             display: grid;
@@ -223,8 +239,8 @@
             color: var(--gold-strong);
         }
         @media (max-width: 700px) {
-            .tab-bar { top: 10px; }
-            .tab { font-size: 14px; padding: 12px; }
+            .tab-bar { top: 10px; grid-template-columns: 1fr; max-width: 420px; }
+            .tab { font-size: 14px; padding: 12px 14px; min-height: 70px; }
             .sigil-title { font-size: 20px; }
         }
     </style>
