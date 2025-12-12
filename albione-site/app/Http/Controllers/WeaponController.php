@@ -30,10 +30,7 @@ class WeaponController extends Controller
 
     public function show(string $slug)
     {
-        $weapon = Weapon::with([
-            'weaponLine.lineSkills' => fn ($query) => $query->orderByRaw("FIELD(slot, 'Q','W','Passive')")->orderBy('name'),
-            'weaponSkill',
-        ])->where('slug', $slug)->firstOrFail();
+        $weapon = Weapon::where('slug', $slug)->firstOrFail();
 
         return view('weapons.show', compact('weapon'));
     }
