@@ -8,15 +8,6 @@
                 <h2 class="text-lg font-semibold mb-3 text-slate-800">Filter</h2>
                 <form method="GET" action="{{ route('weapons.index') }}" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700">Tier</label>
-                        <select name="tier" class="mt-1 w-full rounded border-slate-300">
-                            <option value="">All tiers</option>
-                            @foreach($tiers as $tier)
-                                <option value="{{ $tier }}" @selected(request('tier') === $tier)>{{ $tier }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
                         <label class="block text-sm font-medium text-slate-700">Weapon Line</label>
                         <select name="weapon_line_id" class="mt-1 w-full rounded border-slate-300">
                             <option value="">All lines</option>
@@ -33,7 +24,7 @@
             </div>
             <div class="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600">
                 <p class="font-semibold text-slate-800 mb-2">About</p>
-                <p>Browse Albion-style weapons by tier and category. Content is ready for expansion into armor, skills, and more.</p>
+                <p>Browse Albion-style weapons by category. Content is ready for expansion into armor, skills, and more.</p>
             </div>
         </aside>
         <section class="md:col-span-3">
@@ -49,7 +40,6 @@
                         <img class="h-20 w-20 rounded bg-slate-100 object-cover" src="{{ $weapon->image }}" alt="{{ $weapon->name }}">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 text-sm text-slate-600 flex-wrap">
-                                <span class="rounded bg-slate-100 px-2 py-0.5 font-semibold text-slate-800">{{ $weapon->tier }}</span>
                                 <span class="rounded bg-indigo-50 px-2 py-0.5 text-indigo-700">{{ $weapon->weaponLine?->name }}</span>
                                 @if($weapon->weaponSkill)
                                     <span class="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">E: {{ $weapon->weaponSkill->name }}</span>

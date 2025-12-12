@@ -46,12 +46,11 @@
             <div class="grid md:grid-cols-2 gap-4">
                 @forelse($line->weapons as $weapon)
                     <article class="rounded border border-slate-200 p-4">
-                        <div class="flex items-center gap-2 text-sm text-slate-600">
-                            <span class="rounded bg-slate-100 px-2 py-0.5 font-semibold text-slate-800">{{ $weapon->tier }}</span>
-                            @if($weapon->weaponSkill)
+                        @if($weapon->weaponSkill)
+                            <div class="flex items-center gap-2 text-sm text-slate-600">
                                 <span class="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">E: {{ $weapon->weaponSkill->name }}</span>
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                         <a href="{{ route('weapons.show', $weapon->slug) }}" class="block mt-2 text-lg font-semibold text-indigo-700 hover:text-indigo-800">
                             {{ $weapon->name }}
                         </a>

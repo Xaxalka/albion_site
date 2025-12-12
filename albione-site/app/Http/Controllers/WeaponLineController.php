@@ -11,7 +11,7 @@ class WeaponLineController extends Controller
     {
         $lines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)
             ->with(['weapons' => function ($query) {
-            $query->orderBy('tier');
+            $query->orderBy('name');
         }])->orderBy('name')->get();
 
         return view('weapon-lines.index', compact('lines'));
