@@ -1,57 +1,53 @@
-@php($title = 'Weapon Lines')
+@php($title = 'Линии оружия')
 @extends('layouts.app')
 
 @section('content')
-    <div class="space-y-6">
-        <header>
-            <h1 class="text-3xl font-bold text-slate-900">Weapon Lines</h1>
-            <p class="text-sm text-slate-600">Albion-style lines with shared Q/W/Passive skills.</p>
-        </header>
-        <div class="grid md:grid-cols-3 gap-4">
-            @foreach($lines as $line)
-                <article class="flex h-full flex-col rounded-lg border border-slate-200 bg-white p-4 hover:border-indigo-200">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <a href="{{ route('weapon-lines.show', $line->slug) }}" class="text-xl font-semibold text-indigo-700 hover:text-indigo-800">
-                                {{ $line->name }}
-                            </a>
-                            <p class="text-sm text-slate-600 mt-1">{{ \Illuminate\Support\Str::limit($line->description, 120) }}</p>
-                        </div>
-                        <span class="rounded bg-slate-100 px-2 py-1 text-xs text-slate-700">{{ $line->weapons->count() }} weapons</span>
-                    </div>
-                    <div class="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
-                        @foreach($line->weapons as $weapon)
-                            <span class="rounded bg-indigo-50 px-2 py-1 text-indigo-700">{{ $weapon->name }}</span>
-                        @endforeach
-                    </div>
+<div class="section-header">
+    <div class="eyebrow">Арсенал</div>
+    <h1>Линии оружия</h1>
+    <p>Albion-ветки с общими умениями Q/W и пассивками. Атмосфера тёмного кодекса перенесена на весь сайт.</p>
+</div>
 
-                    @if(isset($quickBranches[$line->name]))
-                        <div class="mt-4 rounded-md bg-slate-50 p-3 text-xs text-slate-700">
-                            <p class="font-semibold text-slate-900">Основные ветки</p>
-                            <p class="mt-1 italic leading-relaxed">{{ $quickBranches[$line->name] }}</p>
-                        </div>
-                    @endif
-                </article>
-            @endforeach
+<section class="panel">
+    <div class="subtle-title">Быстрый обзор</div>
+    <p class="muted">Под сетками добавлены подсказки по основным веткам, чтобы проще ориентироваться между вкладками.</p>
+    <div class="card-grid spaced-top">
+        <div class="card">
+            <div class="subtle-title">Вкладка воина</div>
+            <h3>Арбалеты, Молоты, Топоры</h3>
+            <p class="muted">Боевые перчатки, Булавы, Мечи.</p>
         </div>
-
-        <section class="rounded-lg border border-slate-200 bg-white p-5 space-y-3">
-            <h2 class="text-xl font-semibold text-slate-900">Сетки оружия</h2>
-            <p class="text-sm text-slate-700">Под сетками добавлены быстрые списки основных веток, чтобы было проще ориентироваться между вкладками.</p>
-            <div class="grid md:grid-cols-3 gap-4 text-sm text-slate-700">
-                <div class="space-y-1">
-                    <h3 class="font-semibold text-slate-900">Вкладка воина</h3>
-                    <p class="italic">Арбалеты; Боевые перчатки; Молотки; Булавы; Топоры; Мечи</p>
-                </div>
-                <div class="space-y-1">
-                    <h3 class="font-semibold text-slate-900">Вкладка охотников</h3>
-                    <p class="italic">Луки; Кинжалы; Копья; Шесты; Shapershifts; Друиды</p>
-                </div>
-                <div class="space-y-1">
-                    <h3 class="font-semibold text-slate-900">Вкладка магов</h3>
-                    <p class="italic">Огненные посохи; Священные посохи; Мистические посохи; Морозные посохи; Проклятые посохи</p>
-                </div>
-            </div>
-        </section>
+        <div class="card">
+            <div class="subtle-title">Вкладка охотников</div>
+            <h3>Луки, Кинжалы, Копья</h3>
+            <p class="muted">Шесты, Shapeshifts, Друиды.</p>
+        </div>
+        <div class="card">
+            <div class="subtle-title">Вкладка магов</div>
+            <h3>Огненные, Священные, Мистические</h3>
+            <p class="muted">Морозные посохи, Проклятые посохи.</p>
+        </div>
     </div>
+</section>
+
+<section class="card-grid">
+    @foreach($lines as $line)
+        <article class="card">
+            <div class="subtle-title">{{ $line->weapons->count() }} оружия</div>
+            <h2><a class="link-plain" href="{{ route('weapon-lines.show', $line->slug) }}">{{ $line->name }}</a></h2>
+            <p>{{ \Illuminate\Support\Str::limit($line->description, 160) }}</p>
+            <div class="tags">
+                @foreach($line->weapons as $weapon)
+                    <span class="chip">{{ $weapon->name }}</span>
+                @endforeach
+            </div>
+            @if(isset($quickBranches[$line->name]))
+                <div class="panel panel-compact">
+                    <div class="subtle-title">Основные ветки</div>
+                    <p class="muted mt-6">{{ $quickBranches[$line->name] }}</p>
+                </div>
+            @endif
+        </article>
+    @endforeach
+</section>
 @endsection

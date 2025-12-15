@@ -1,65 +1,52 @@
-@php($title = $line->name . ' - Weapon Line')
+@php($title = $line->name . ' — линия оружия')
 @extends('layouts.app')
 
 @section('content')
-    <div class="space-y-6">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <p class="text-sm text-slate-600">Weapon Line</p>
-                <h1 class="text-3xl font-bold text-slate-900">{{ $line->name }}</h1>
-                <p class="mt-2 text-slate-700">{{ $line->description }}</p>
-            </div>
-            <a href="{{ route('weapon-lines.index') }}" class="text-sm text-indigo-700 hover:text-indigo-800">Back to lines</a>
-        </div>
-
-        <section class="rounded-lg border border-slate-200 bg-white p-5 space-y-4">
-            <header class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold text-slate-900">Shared Skills (Q / W / Passive)</h2>
-                <span class="text-xs text-slate-500">{{ $line->lineSkills->count() }} skills</span>
-            </header>
-            <div class="grid md:grid-cols-2 gap-4">
-                @forelse($line->lineSkills as $skill)
-                    <article class="rounded border border-slate-200 p-4 bg-slate-50">
-                        <div class="flex items-center justify-between text-sm text-slate-600">
-                            <span class="rounded bg-indigo-50 px-2 py-0.5 text-indigo-700 font-semibold">{{ $skill->slot }}</span>
-                            @if($skill->author_notes)
-                                <span class="text-xs text-slate-500">Notes available</span>
-                            @endif
-                        </div>
-                        <h3 class="mt-2 text-lg font-semibold text-slate-900">{{ $skill->name }}</h3>
-                        <p class="text-sm text-slate-700 mt-1">{{ $skill->description }}</p>
-                        @if($skill->author_notes)
-                            <p class="mt-2 text-xs text-slate-500">Author: {{ $skill->author_notes }}</p>
-                        @endif
-                    </article>
-                @empty
-                    <p class="text-sm text-slate-600">No shared skills yet.</p>
-                @endforelse
-            </div>
-        </section>
-
-        <section class="rounded-lg border border-slate-200 bg-white p-5 space-y-4">
-            <header class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold text-slate-900">Weapons in this line</h2>
-                <span class="text-xs text-slate-500">{{ $line->weapons->count() }} weapons</span>
-            </header>
-            <div class="grid md:grid-cols-2 gap-4">
-                @forelse($line->weapons as $weapon)
-                    <article class="rounded border border-slate-200 p-4">
-                        @if($weapon->weaponSkill)
-                            <div class="flex items-center gap-2 text-sm text-slate-600">
-                                <span class="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">E: {{ $weapon->weaponSkill->name }}</span>
-                            </div>
-                        @endif
-                        <a href="{{ route('weapons.show', $weapon->slug) }}" class="block mt-2 text-lg font-semibold text-indigo-700 hover:text-indigo-800">
-                            {{ $weapon->name }}
-                        </a>
-                        <p class="text-sm text-slate-700 mt-1">{{ $weapon->description }}</p>
-                    </article>
-                @empty
-                    <p class="text-sm text-slate-600">No weapons in this line yet.</p>
-                @endforelse
-            </div>
-        </section>
+<div class="section-header">
+    <div class="eyebrow">Линия оружия</div>
+    <h1>{{ $line->name }}</h1>
+    <p>{{ $line->description }}</p>
+    <div class="tags">
+        <a class="btn" href="{{ route('weapon-lines.index') }}">← Вернуться к линиям</a>
     </div>
+</div>
+
+<section class="panel">
+    <div class="subtle-title">Общие навыки</div>
+    <h2 class="mt-6">Q / W / Passive</h2>
+    <div class="card-grid mt-12">
+        @forelse($line->lineSkills as $skill)
+            <article class="card">
+                <div class="meta">{{ $skill->slot }}</div>
+                <h3>{{ $skill->name }}</h3>
+                <p class="mt-6">{{ $skill->description }}</p>
+                @if($skill->author_notes)
+                    <p class="muted mt-8">Заметки автора: {{ $skill->author_notes }}</p>
+                @endif
+            </article>
+        @empty
+            <p class="muted">Пока нет общих навыков для этой линии.</p>
+        @endforelse
+    </div>
+</section>
+
+<section class="panel">
+    <div class="subtle-title">Оружие в линии</div>
+    <h2 class="mt-6">{{ $line->weapons->count() }} предметов</h2>
+    <div class="card-grid mt-12">
+        @forelse($line->weapons as $weapon)
+            <article class="card">
+                @if($weapon->weaponSkill)
+                    <span class="chip">E: {{ $weapon->weaponSkill->name }}</span>
+                @endif
+                <h3 class="mt-10">
+                    <a class="link-plain" href="{{ route('weapons.show', $weapon->slug) }}">{{ $weapon->name }}</a>
+                </h3>
+                <p class="mt-6">{{ $weapon->description }}</p>
+            </article>
+        @empty
+            <p class="muted">В этой линии пока нет оружия.</p>
+        @endforelse
+    </div>
+</section>
 @endsection
