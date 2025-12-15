@@ -1,4 +1,4 @@
-@php($title = $line->name . ' - Weapon Line')
+@php($title = $line->name . ' — линия оружия')
 @extends('layouts.app')
 
 @section('content')

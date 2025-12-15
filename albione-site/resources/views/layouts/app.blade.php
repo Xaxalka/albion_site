@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Albion Armory Wiki' }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <title>{{ $title ?? 'Albion Codex' }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         (() => {
@@ -106,20 +108,15 @@
         </div>
     </div>
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
+    <main class="content-area">
         @if (session('status'))
-            <div class="mb-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-green-800">
-                {{ session('status') }}
-            </div>
+            <div class="alert">{{ session('status') }}</div>
         @endif
 
         @yield('content')
     </main>
 
-    <footer class="border-t border-slate-200 bg-white">
-        <div class="max-w-6xl mx-auto px-4 py-4 text-sm text-slate-500">
-            Albion Armory Wiki base &middot; Ready for expansion
-        </div>
-    </footer>
+    <footer class="footer">Albion Codex — фанатская база. Готово к расширению.</footer>
+</div>
 </body>
 </html>
