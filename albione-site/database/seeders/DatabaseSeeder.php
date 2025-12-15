@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
     {
         $supportsUsername = Schema::hasColumn('users', 'username');
 
-        // Avoid duplicate test user on repeated seeding
-        User::updateOrCreate(
+        // Create baseline users without overwriting manually managed roles
+        User::firstOrCreate(
             ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::updateOrCreate(
+        User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
