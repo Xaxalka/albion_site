@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\VerificationCodeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
@@ -16,23 +17,33 @@ class RegisterController extends Controller
 
     public function create(): View
     {
-        return view('auth.register', ['title' => 'Регистрация']);
+        return view('auth.register', [
+            'title' => 'Регистрация',
+            'supportsUsername' => Schema::hasColumn('users', 'username'),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $supportsUsername = Schema::hasColumn('users', 'username');
+
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'confirmed', 'min:8'],
-        ]);
+        ];
+
+        if ($supportsUsername) {
+            $rules['username'] = ['required', 'string', 'max:255', 'alpha_dash', 'unique:users,username'];
+        }
+
+        $data = $request->validate($rules);
 
         $user = User::create([
             'name' => $data['name'],
-            'username' => $data['username'],
             'email' => $data['email'],
             'password' => $data['password'],
+            'username' => $supportsUsername ? $data['username'] : null,
         ]);
 
         $this->verificationCodes->send($user);

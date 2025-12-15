@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Seeders\WeaponSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,14 +17,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $supportsUsername = Schema::hasColumn('users', 'username');
+
         // Avoid duplicate test user on repeated seeding
         User::updateOrCreate(
             ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
-                'username' => 'testuser',
                 'password' => 'password',
                 'email_verified_at' => now(),
+                'username' => $supportsUsername ? 'testuser' : null,
             ]
         );
 
@@ -31,9 +34,9 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
-                'username' => 'admin',
                 'password' => 'admin',
                 'email_verified_at' => now(),
+                'username' => $supportsUsername ? 'admin' : null,
             ]
         );
 
