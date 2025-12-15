@@ -224,6 +224,83 @@
             color: var(--muted);
             line-height: 1.6;
         }
+        .content-body {
+            margin-top: 16px;
+            display: grid;
+            gap: 14px;
+        }
+        .info-card {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            background: linear-gradient(120deg, rgba(255,255,255,0.02), rgba(13,19,31,0.8));
+            box-shadow: 0 10px 26px var(--shadow);
+            display: grid;
+            gap: 10px;
+        }
+        .info-card__header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .info-card__title {
+            margin: 0;
+            font-size: 17px;
+            color: #fff;
+        }
+        .info-card__meta {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .info-card__img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 8px;
+        }
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .pill {
+            padding: 6px 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text);
+            letter-spacing: 0.01em;
+        }
+        .branch-grid, .gallery-grid {
+            display: grid;
+            gap: 12px;
+        }
+        .gallery-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+        .gallery-grid img {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+        }
+        .variants-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .variant {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px;
+            display: grid;
+            gap: 6px;
+            background: rgba(255,255,255,0.03);
+            min-width: 180px;
+        }
         .content-actions {
             margin-top: 14px;
             display: flex;
@@ -306,37 +383,135 @@
                 <span class="chip">Категория: Мобы</span>
                 <span class="chip">Стиль: Темное фэнтези</span>
             </div>
+            <div id="contentArea" class="content-body" aria-label="Динамический контент"></div>
             <div class="scroll-hint">Навигация закрепится сверху при прокрутке.</div>
         </section>
     </main>
 </div>
 
 <script>
+    const mobsData = @json($mobs);
+    const gearData = {
+        branches: @json($weaponBranches),
+        armors: @json($armors)
+    };
+    const contentsData = @json($contents);
+    const buildsData = @json($builds);
+
     const tabs = document.querySelectorAll('.tab');
     const contentTitle = document.getElementById('contentTitle');
     const contentText = document.getElementById('contentText');
     const contentActions = document.getElementById('contentActions');
+    const contentArea = document.getElementById('contentArea');
+
+    const escapeHtml = (str) => (str || '').replace(/[&<>'"]/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;',
+    })[char]);
+
+    const renderMobs = () => mobsData.map(mob => `
+        <article class="info-card">
+            <div class="info-card__header">
+                <img src="${escapeHtml(mob.image)}" alt="${escapeHtml(mob.name)}" class="info-card__img" loading="lazy">
+                <div>
+                    <h4 class="info-card__title">${escapeHtml(mob.name)}</h4>
+                    <div class="info-card__meta">${escapeHtml(mob.tier_range)}</div>
+                </div>
+            </div>
+            <p class="content-placeholder__text">${escapeHtml(mob.description)}</p>
+            <div class="pill-row">${mob.skills.map(skill => `<span class="pill">${escapeHtml(skill)}</span>`).join('')}</div>
+        </article>
+    `).join('');
+
+    const renderGear = () => {
+        const branches = gearData.branches.map(branch => `
+            <article class="info-card">
+                <div class="info-card__header">
+                    <div class="pill">${escapeHtml(branch.icon)}</div>
+                    <div>
+                        <h4 class="info-card__title">${escapeHtml(branch.name)}</h4>
+                        <div class="info-card__meta">${escapeHtml(branch.summary)}</div>
+                    </div>
+                </div>
+                <div class="branch-grid">
+                    <div><strong>Q навыки:</strong> ${branch.q_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
+                    <div><strong>W навыки:</strong> ${branch.w_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
+                    <div><strong>Пассив:</strong> ${escapeHtml(branch.passive.name)}</div>
+                </div>
+                <div class="variants-row">
+                    ${branch.variants.map(variant => `
+                        <div class="variant">
+                            <div class="info-card__meta">${escapeHtml(variant.role)}</div>
+                            <div class="info-card__title">${escapeHtml(variant.name)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </article>
+        `).join('');
+
+        const armors = gearData.armors.map(armor => `
+            <article class="info-card">
+                <div class="info-card__header">
+                    <div class="pill">${escapeHtml(armor.type)}</div>
+                    <h4 class="info-card__title">${escapeHtml(armor.name)}</h4>
+                </div>
+                <p class="content-placeholder__text">${escapeHtml(armor.description)}</p>
+            </article>
+        `).join('');
+
+        return branches + armors;
+    };
+
+    const renderContents = () => contentsData.map(entry => `
+        <article class="info-card">
+            <div class="info-card__header">
+                <img src="${escapeHtml(entry.icon)}" alt="${escapeHtml(entry.name)}" class="info-card__img" loading="lazy">
+                <div>
+                    <h4 class="info-card__title">${escapeHtml(entry.name)}</h4>
+                    <div class="info-card__meta">${escapeHtml(entry.description)}</div>
+                </div>
+            </div>
+            <div class="gallery-grid">
+                ${entry.gallery.map(src => `<img src="${escapeHtml(src)}" alt="${escapeHtml(entry.name)}" loading="lazy">`).join('')}
+            </div>
+        </article>
+    `).join('');
+
+    const renderBuilds = () => buildsData.map(build => `
+        <article class="info-card">
+            <h4 class="info-card__title">${escapeHtml(build.name)}</h4>
+            <p class="content-placeholder__text">${escapeHtml(build.description)}</p>
+            <div class="pill-row">${build.tags.map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join('')}</div>
+        </article>
+    `).join('');
 
     const tabContent = {
         mobs: {
             title: 'Мобы — обзор угроз',
-            text: 'Выберите раздел для просмотра информации. Здесь появятся подборки боссов, рейдовых монстров и их умения.',
+            text: 'Подборки боссов, рейдовых монстров и их умения обновятся сразу после выбора вкладки.',
             chips: ['Категория: Мобы', 'Тактика: Контроль и уклонение'],
+            renderer: renderMobs,
         },
         gear: {
             title: 'Снаряжение — кузница силы',
             text: 'Просматривайте уникальные сетовые бонусы, сравнивайте артефактные предметы и собирайте собственные комплекты.',
-            chips: ['Категория: Снаряжение', 'Стили: Пластинa, кожа, ткань'],
+            chips: ['Категория: Снаряжение', 'Стили: Пластина, кожа, ткань'],
+            renderer: renderGear,
         },
         content: {
             title: 'Контент — где искать славу',
             text: 'Данжи, дороги Авалона, вторжения и особые события появятся в этом блоке с картами и мини-галереей.',
             chips: ['Категория: Контент', 'Режимы: PvE и PvP'],
+            renderer: renderContents,
         },
         builds: {
             title: 'Билды — стратегии и роли',
             text: 'Фильтруйте по ролям и активности: соло PvP, группы, или масштабные ZvZ. Заглушка готова принять ваши сетапы.',
             chips: ['Категория: Билды', 'Фокус: Роли и навыки'],
+            renderer: renderBuilds,
         },
     };
 
@@ -347,6 +522,7 @@
         contentTitle.textContent = data.title;
         contentText.textContent = data.text;
         contentActions.innerHTML = data.chips.map(chip => `<span class="chip">${chip}</span>`).join('');
+        contentArea.innerHTML = data.renderer ? data.renderer() : '';
     };
 
     tabs.forEach(btn => btn.addEventListener('click', () => setActiveTab(btn.dataset.tab)));
