@@ -27,11 +27,6 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Admin', 'username' => 'admin', 'password' => 'admin']
         );
 
-        User::updateOrCreate(
-            ['email' => 'admin@example.com'],
-            ['name' => 'admin', 'password' => bcrypt('admin')]
-        );
-
         $this->call([
             WeaponSeeder::class,
         ]);

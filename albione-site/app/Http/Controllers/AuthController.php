@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -24,9 +25,25 @@ class AuthController extends Controller
         $login = $data['login'];
         $password = $data['password'];
 
-        $attempted = Auth::attempt(['email' => $login, 'password' => $password])
-            || Auth::attempt(['username' => $login, 'password' => $password])
-            || Auth::attempt(['name' => $login, 'password' => $password]);
+        $credentialOptions = [
+            ['email' => $login, 'password' => $password],
+        ];
+
+        if (Schema::hasColumn('users', 'username')) {
+            $credentialOptions[] = ['username' => $login, 'password' => $password];
+        }
+
+        $credentialOptions[] = ['name' => $login, 'password' => $password];
+
+        $attempted = false;
+
+        foreach ($credentialOptions as $credentials) {
+            $attempted = Auth::attempt($credentials);
+
+            if ($attempted) {
+                break;
+            }
+        }
 
         if (! $attempted) {
             return back()
