@@ -379,7 +379,9 @@
             <a class="cta-link" href="{{ route('weapon-lines.index') }}">Линии оружия <span>Ветки и умения</span></a>
             <a class="cta-link" href="{{ route('weapons.index') }}">Оружие <span>Каталог и фильтры</span></a>
             <a class="cta-link" href="{{ route('wiki') }}#builds">Билды <span>Сборки по ролям</span></a>
-            <a class="cta-link" href="{{ route('admin.weapons.index') }}">Админка <span>Управление данными</span></a>
+            @if(Auth::user()?->is_admin)
+                <a class="cta-link" href="{{ route('admin.weapons.index') }}">Админка <span>Управление данными</span></a>
+            @endif
         </nav>
     </header>
 
