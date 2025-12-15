@@ -3,18 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Services\VerificationCodeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
-    public function __construct(private readonly VerificationCodeService $verificationCodes)
-    {
-    }
-
     public function create(): View
     {
         return view('auth.register', [
@@ -51,11 +48,12 @@ class RegisterController extends Controller
 
         $user = User::create($userData);
 
-        $this->verificationCodes->send($user);
+        $user->forceFill(['email_verified_at' => Date::now()])->save();
 
-        $request->session()->put('verification_email', $user->email);
+        Auth::login($user);
+        $request->session()->regenerate();
 
-        return redirect()->route('verification.notice')
-            ->with('status', 'Мы отправили код подтверждения на вашу почту.');
+        return redirect()->intended(route('admin.weapons.index'))
+            ->with('status', 'Регистрация прошла успешно. Добро пожаловать!');
     }
 }
