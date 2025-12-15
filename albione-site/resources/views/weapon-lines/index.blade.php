@@ -7,9 +7,9 @@
             <h1 class="text-3xl font-bold text-slate-900">Weapon Lines</h1>
             <p class="text-sm text-slate-600">Albion-style lines with shared Q/W/Passive skills.</p>
         </header>
-        <div class="grid md:grid-cols-2 gap-4">
+        <div class="grid md:grid-cols-3 gap-4">
             @foreach($lines as $line)
-                <article class="rounded-lg border border-slate-200 bg-white p-5 hover:border-indigo-200">
+                <article class="flex h-full flex-col rounded-lg border border-slate-200 bg-white p-4 hover:border-indigo-200">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <a href="{{ route('weapon-lines.show', $line->slug) }}" class="text-xl font-semibold text-indigo-700 hover:text-indigo-800">
@@ -24,6 +24,13 @@
                             <span class="rounded bg-indigo-50 px-2 py-1 text-indigo-700">{{ $weapon->name }}</span>
                         @endforeach
                     </div>
+
+                    @if(isset($quickBranches[$line->name]))
+                        <div class="mt-4 rounded-md bg-slate-50 p-3 text-xs text-slate-700">
+                            <p class="font-semibold text-slate-900">Основные ветки</p>
+                            <p class="mt-1 italic leading-relaxed">{{ $quickBranches[$line->name] }}</p>
+                        </div>
+                    @endif
                 </article>
             @endforeach
         </div>
