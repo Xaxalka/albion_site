@@ -53,7 +53,7 @@ class RegisterController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.weapons.index'))
+        return redirect()->intended(route('wiki'))
             ->with('status', 'Регистрация прошла успешно. Добро пожаловать!');
     }
 }

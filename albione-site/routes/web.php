@@ -14,15 +14,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return app(WikiController::class)->index();
+})->middleware('auth');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/wiki', [WikiController::class, 'index'])->name('wiki');
+
+    Route::get('/weapon-lines', [WeaponLineController::class, 'index'])->name('weapon-lines.index');
+    Route::get('/weapon-lines/{slug}', [WeaponLineController::class, 'show'])->name('weapon-lines.show');
+    Route::get('/weapons', [WeaponController::class, 'index'])->name('weapons.index');
+    Route::get('/weapons/{slug}', [WeaponController::class, 'show'])->name('weapons.show');
+    Route::get('/media/{media}', [SkillMediaController::class, 'show'])->middleware('signed')->name('media.show');
 });
-
-Route::get('/wiki', [WikiController::class, 'index'])->name('wiki');
-
-Route::get('/weapon-lines', [WeaponLineController::class, 'index'])->name('weapon-lines.index');
-Route::get('/weapon-lines/{slug}', [WeaponLineController::class, 'show'])->name('weapon-lines.show');
-Route::get('/weapons', [WeaponController::class, 'index'])->name('weapons.index');
-Route::get('/weapons/{slug}', [WeaponController::class, 'show'])->name('weapons.show');
-Route::get('/media/{media}', [SkillMediaController::class, 'show'])->middleware('signed')->name('media.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
@@ -34,7 +36,7 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/weapon-lines', [AdminWeaponLineController::class, 'index'])->name('weapon-lines.index');
     Route::get('/weapon-lines/create', [AdminWeaponLineController::class, 'create'])->name('weapon-lines.create');
     Route::post('/weapon-lines', [AdminWeaponLineController::class, 'store'])->name('weapon-lines.store');

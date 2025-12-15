@@ -175,7 +175,9 @@
             <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
             <a href="{{ route('weapons.index') }}">Оружие</a>
             @auth
-                <a href="{{ route('admin.weapons.index') }}">Админка</a>
+                @if(Auth::user()?->is_admin)
+                    <a href="{{ route('admin.weapons.index') }}">Админка</a>
+                @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit">Выйти ({{ Auth::user()->name }})</button>

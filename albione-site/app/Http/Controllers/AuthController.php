@@ -12,7 +12,7 @@ class AuthController extends Controller
 
     public function create(): View
     {
-        return view('auth.login', ['title' => 'Вход в админку']);
+        return view('auth.login', ['title' => 'Вход в аккаунт']);
     }
 
     public function store(Request $request): RedirectResponse
@@ -54,8 +54,8 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()
-            ->intended(route('admin.weapons.index'))
-            ->with('status', 'Добро пожаловать в панель управления.');
+            ->intended(route('wiki'))
+            ->with('status', 'Добро пожаловать!');
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -65,6 +65,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('wiki')->with('status', 'Вы вышли из системы.');
+        return redirect()->route('login')->with('status', 'Вы вышли из системы.');
     }
 }
