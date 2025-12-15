@@ -61,9 +61,85 @@
             --link-hover: #a855f7;
         }
         body {
-            background-color: var(--page-bg);
-            color: var(--text-color);
-            transition: background-color 150ms ease, color 150ms ease;
+            margin: 0;
+            background: radial-gradient(circle at 18% 22%, rgba(215,182,118,0.08), transparent 35%),
+                        radial-gradient(circle at 82% 12%, rgba(255,189,89,0.08), transparent 32%),
+                        linear-gradient(145deg, var(--bg) 0%, var(--bg-2) 100%);
+            color: var(--text);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+        .page-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 20px 64px;
+            position: relative;
+        }
+        .page-shell::before {
+            content: "";
+            position: absolute;
+            inset: 18% auto 10% 5%;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(242,200,124,0.16), transparent 70%);
+            filter: blur(8px);
+            pointer-events: none;
+        }
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 16px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(13,19,31,0.78);
+            box-shadow: 0 10px 30px var(--shadow);
+            position: sticky;
+            top: 14px;
+            z-index: 20;
+            backdrop-filter: blur(12px);
+        }
+        .crest {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(13,19,31,0.7);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--gold-strong);
+            font-size: 13px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav-links form {
+            margin: 0;
+        }
+        .nav-links a {
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            color: var(--text);
+            text-decoration: none;
+            background: linear-gradient(140deg, rgba(242,200,124,0.08), rgba(16,23,35,0.85));
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            transition: 160ms ease;
+        }
+        .nav-links a:hover,
+        .nav-links a:focus-visible {
+            border-color: var(--gold-strong);
+            color: #fff;
+            outline: none;
+            box-shadow: 0 10px 26px rgba(242,200,124,0.18);
         }
         .theme-panel {
             background-color: var(--panel-bg);
@@ -89,25 +165,26 @@
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <div class="border-b theme-panel shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('weapons.index') }}" class="text-xl font-semibold theme-link">
-                    Albion Armory
-                </a>
-                <span class="text-sm theme-muted">Wiki Base</span>
-            </div>
-            <div class="flex items-center gap-4 text-sm">
-                <button @click="toggle" type="button" class="rounded border px-3 py-1.5 text-sm font-semibold theme-panel theme-link">
-                    <span x-text="theme === 'dark' ? 'Light mode' : 'Dark mode'"></span>
-                </button>
-                <a class="theme-link" href="{{ route('weapon-lines.index') }}">Weapon Lines</a>
-                <a class="theme-link" href="{{ route('weapons.index') }}">Weapons</a>
-                <a class="theme-link" href="{{ route('admin.weapons.index') }}">Admin</a>
-            </div>
-        </div>
-    </div>
+<body>
+<div class="page-shell">
+    <header class="site-header">
+        <div class="crest">Albion Codex</div>
+        <nav class="nav-links" aria-label="Главная навигация">
+            <a href="{{ route('wiki') }}">Главная</a>
+            <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
+            <a href="{{ route('weapons.index') }}">Оружие</a>
+            @auth
+                <a href="{{ route('admin.weapons.index') }}">Админка</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">Выйти ({{ Auth::user()->name }})</button>
+                </form>
+            @else
+                <a href="{{ route('register') }}">Регистрация</a>
+                <a href="{{ route('login') }}">Войти</a>
+            @endauth
+        </nav>
+    </header>
 
     <main class="content-area">
         @if (session('status'))
