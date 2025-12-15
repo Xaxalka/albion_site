@@ -1,3 +1,256 @@
+@php($title = 'Albion Codex — Wiki')
+@extends('layouts.app')
+
+@section('content')
+<style>
+    .page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 10px 0 40px;
+        position: relative;
+    }
+    .page::before {
+        content: "";
+        position: absolute;
+        inset: 12% auto 8% 4%;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(242,200,124,0.16), transparent 70%);
+        filter: blur(8px);
+        pointer-events: none;
+    }
+    header.hero {
+        text-align: center;
+        display: grid;
+        gap: 16px;
+        justify-items: center;
+    }
+    .hero__crest {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(13,19,31,0.7);
+        box-shadow: 0 10px 30px var(--shadow);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--gold-strong);
+    }
+    .hero__title {
+        font-family: 'Cinzel', 'Inter', serif;
+        margin: 0;
+        font-size: clamp(28px, 4vw, 42px);
+        letter-spacing: 0.02em;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.45);
+    }
+    .hero__subtitle {
+        margin: 0;
+        max-width: 780px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+    .tab-bar {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(170px, 1fr));
+        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        padding: 12px;
+        background: linear-gradient(120deg, rgba(13,19,31,0.9), rgba(13,19,31,0.75));
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 12px 36px var(--shadow);
+        max-width: 560px;
+        width: 100%;
+        justify-self: center;
+    }
+    .tab {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 16px 12px;
+        background: radial-gradient(circle at 20% 18%, rgba(242,200,124,0.08), rgba(16,23,35,0.9));
+        color: var(--text);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        cursor: pointer;
+        transition: 180ms ease;
+        text-align: left;
+        min-height: 78px;
+        position: relative;
+        overflow: hidden;
+    }
+    .tab::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.03);
+        opacity: 0;
+        transition: 180ms ease;
+    }
+    .tab span { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .tab.active {
+        border-color: var(--gold-strong);
+        box-shadow: 0 10px 26px rgba(242,200,124,0.22), 0 0 0 1px rgba(242,200,124,0.2) inset;
+        background: linear-gradient(140deg, rgba(242,200,124,0.18), rgba(16,23,35,0.96));
+        color: #fff;
+    }
+    .tab.active::after { opacity: 1; }
+    .tab:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .layout-grid { display: grid; gap: 24px; margin-top: 28px; justify-items: center; }
+    .sigils {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        width: 100%;
+        max-width: 960px;
+        justify-items: center;
+    }
+    .sigil-card {
+        position: relative;
+        padding: 18px 16px;
+        border-radius: 16px;
+        background: linear-gradient(150deg, rgba(16,23,35,0.95), rgba(13,19,31,0.8));
+        border: 1px solid var(--line);
+        box-shadow: 0 14px 30px var(--shadow);
+        overflow: hidden;
+    }
+    .sigil-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 20% 20%, rgba(242,200,124,0.12), transparent 45%);
+        opacity: 0.8;
+        pointer-events: none;
+    }
+    .sigil-title {
+        font-family: 'Cinzel', 'Inter', serif;
+        font-size: 22px;
+        margin: 6px 0 4px;
+        color: var(--gold-strong);
+        text-shadow: 0 4px 12px rgba(242,200,124,0.15);
+    }
+    .sigil-name { margin: 0; font-size: 18px; letter-spacing: 0.03em; color: #fff; }
+    .sigil-rune {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.04);
+        color: var(--gold);
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .content-panel {
+        position: relative;
+        border-radius: 18px;
+        padding: 20px;
+        background: linear-gradient(160deg, rgba(13,19,31,0.95), rgba(11,16,25,0.92));
+        border: 1px solid var(--line);
+        box-shadow: 0 14px 34px var(--shadow);
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+    }
+    .content-panel::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border: 1px solid rgba(255,255,255,0.04);
+        border-radius: 14px;
+        pointer-events: none;
+    }
+    .content-placeholder h3 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        font-family: 'Cinzel', 'Inter', serif;
+        color: var(--gold);
+    }
+    .content-placeholder p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .content-body { margin-top: 16px; display: grid; gap: 14px; }
+    .info-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        background: linear-gradient(120deg, rgba(255,255,255,0.02), rgba(13,19,31,0.8));
+        box-shadow: 0 10px 26px var(--shadow);
+        display: grid;
+        gap: 10px;
+    }
+    .info-card__header { display: flex; align-items: center; gap: 12px; }
+    .info-card__title { margin: 0; font-size: 17px; color: #fff; }
+    .info-card__meta { color: var(--muted); font-size: 14px; }
+    .info-card__img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 8px;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+        padding: 6px 10px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+    .branch-grid, .gallery-grid { display: grid; gap: 12px; }
+    .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .gallery-grid img { width: 100%; border-radius: 12px; border: 1px solid var(--line); }
+    .variants-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .variant {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        display: grid;
+        gap: 6px;
+        background: rgba(255,255,255,0.03);
+        min-width: 180px;
+    }
+    .content-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        font-size: 14px;
+        letter-spacing: 0.02em;
+    }
+    .scroll-hint {
+        margin-top: 10px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+    .scroll-hint::before { content: "⇣"; color: var(--gold-strong); }
+    @media (max-width: 700px) {
+        .tab-bar { top: 10px; grid-template-columns: 1fr; max-width: 420px; }
+        .tab { font-size: 14px; padding: 12px 14px; min-height: 70px; }
+        .sigil-title { font-size: 20px; }
+    }
+</style>
+
 <!doctype html>
 <html lang="ru">
 <head>
@@ -538,5 +791,4 @@
 
     observer.observe(tabBar);
 </script>
-</body>
-</html>
+@endsection
