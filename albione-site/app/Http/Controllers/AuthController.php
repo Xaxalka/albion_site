@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\VerificationCodeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,10 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    public function __construct(private readonly VerificationCodeService $verificationCodes)
+    {
+    }
+
     public function create(): View
     {
         return view('auth.login', ['title' => 'Вход в админку']);
@@ -52,6 +57,18 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if ($user && is_null($user->email_verified_at)) {
+            Auth::logout();
+
+            $this->verificationCodes->send($user);
+            $request->session()->put('verification_email', $user->email);
+
+            return redirect()->route('verification.notice')
+                ->withErrors(['login' => 'Подтвердите email перед входом. Мы отправили новый код.']);
+        }
 
         return redirect()
             ->intended(route('admin.weapons.index'))

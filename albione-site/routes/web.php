@@ -5,7 +5,9 @@ use App\Http\Controllers\Admin\WeaponController as AdminWeaponController;
 use App\Http\Controllers\Admin\WeaponLineController as AdminWeaponLineController;
 use App\Http\Controllers\Admin\WeaponSkillController as AdminWeaponSkillController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SkillMediaController;
+use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\WikiController;
 use App\Http\Controllers\WeaponController;
 use App\Http\Controllers\WeaponLineController;
@@ -26,6 +28,13 @@ Route::get('/media/{media}', [SkillMediaController::class, 'show'])->middleware(
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
     Route::post('/login', [AuthController::class, 'store'])->name('login.store');
+
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+
+    Route::get('/email/verify', [VerificationController::class, 'show'])->name('verification.notice');
+    Route::post('/email/verify', [VerificationController::class, 'store'])->name('verification.verify');
+    Route::post('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 });
 
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');

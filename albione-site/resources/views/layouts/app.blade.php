@@ -181,6 +181,7 @@
                     <button type="submit">Выйти ({{ Auth::user()->name }})</button>
                 </form>
             @else
+                <a href="{{ route('register') }}">Регистрация</a>
                 <a href="{{ route('login') }}">Войти</a>
             @endauth
         </nav>
