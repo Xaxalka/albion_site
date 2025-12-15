@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\LineSkillController as AdminLineSkillController;
 use App\Http\Controllers\Admin\WeaponController as AdminWeaponController;
 use App\Http\Controllers\Admin\WeaponLineController as AdminWeaponLineController;
 use App\Http\Controllers\Admin\WeaponSkillController as AdminWeaponSkillController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SkillMediaController;
 use App\Http\Controllers\WikiController;
 use App\Http\Controllers\WeaponController;
@@ -22,7 +23,14 @@ Route::get('/weapons', [WeaponController::class, 'index'])->name('weapons.index'
 Route::get('/weapons/{slug}', [WeaponController::class, 'show'])->name('weapons.show');
 Route::get('/media/{media}', [SkillMediaController::class, 'show'])->middleware('signed')->name('media.show');
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'create'])->name('login');
+    Route::post('/login', [AuthController::class, 'store'])->name('login.store');
+});
+
+Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
+
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/weapon-lines', [AdminWeaponLineController::class, 'index'])->name('weapon-lines.index');
     Route::get('/weapon-lines/create', [AdminWeaponLineController::class, 'create'])->name('weapon-lines.create');
     Route::post('/weapon-lines', [AdminWeaponLineController::class, 'store'])->name('weapon-lines.store');

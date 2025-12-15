@@ -82,6 +82,9 @@
             gap: 10px;
             flex-wrap: wrap;
         }
+        .nav-links form {
+            margin: 0;
+        }
         .nav-links a {
             padding: 10px 12px;
             border-radius: 12px;
@@ -171,7 +174,15 @@
             <a href="{{ route('wiki') }}">Главная</a>
             <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
             <a href="{{ route('weapons.index') }}">Оружие</a>
-            <a href="{{ route('admin.weapons.index') }}">Админка</a>
+            @auth
+                <a href="{{ route('admin.weapons.index') }}">Админка</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">Выйти ({{ Auth::user()->name }})</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}">Войти</a>
+            @endauth
         </nav>
     </header>
 
