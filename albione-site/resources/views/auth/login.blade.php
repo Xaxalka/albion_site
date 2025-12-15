@@ -12,7 +12,7 @@
             @csrf
 
             <div>
-                <label for="login">Логин</label>
+                <label for="login">Логин или email</label>
                 <input id="login" name="login" type="text" value="{{ old('login') }}" required autofocus>
                 @error('login')
                     <p class="alert" role="alert">{{ $message }}</p>

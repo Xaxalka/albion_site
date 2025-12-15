@@ -25,6 +25,7 @@ class AuthController extends Controller
         $password = $data['password'];
 
         $attempted = Auth::attempt(['email' => $login, 'password' => $password])
+            || Auth::attempt(['username' => $login, 'password' => $password])
             || Auth::attempt(['name' => $login, 'password' => $password]);
 
         if (! $attempted) {
