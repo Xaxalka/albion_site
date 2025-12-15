@@ -1,81 +1,61 @@
-@php($title = $weapon->name . ' - Albion Armory')
+@php($title = $weapon->name . ' — оружие Albion')
 @extends('layouts.app')
 
 @section('content')
-    <style>[x-cloak]{display:none;}</style>
-    <div
-        class="max-w-5xl mx-auto space-y-8"
-        x-data="{
-            enchantments: [0,1,2,3],
-            selectedEnchant: @json((int) $weapon->enchantment),
-        }"
-    >
-        <header class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-            <div class="flex flex-col md:flex-row md:items-center">
-                <div class="md:w-48 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 flex justify-center p-6">
-                    <img
-                        src="{{ $weapon->image ?: 'https://via.placeholder.com/256x256?text=Weapon' }}"
-                        alt="{{ $weapon->name }}"
-                        class="h-32 w-32 object-contain drop-shadow"
-                    >
-                </div>
-                <div class="flex-1 p-6 space-y-3">
-                    <div class="flex flex-wrap items-center gap-2 text-sm text-slate-600">
-                        <span class="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">Enchantment +<span x-text="selectedEnchant"></span></span>
-                        <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-700 capitalize">{{ $weapon->type }}</span>
-                    </div>
-                    <h1 class="text-3xl font-bold text-slate-900">{{ $weapon->name }}</h1>
-                    <p class="text-slate-600">Item Power: <span class="font-semibold text-slate-900">{{ $weapon->item_power }}</span></p>
-                    <p class="text-slate-700 leading-relaxed">{{ $weapon->description }}</p>
-                </div>
-            </div>
-        </header>
-
-        <section class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 space-y-4">
-            <h2 class="text-xl font-semibold text-slate-900">Characteristics</h2>
-            <div class="overflow-hidden rounded-lg border border-slate-200">
-                <table class="min-w-full divide-y divide-slate-200 text-sm">
-                    <tbody class="divide-y divide-slate-200">
-                        <tr class="bg-slate-50">
-                            <th class="px-4 py-3 text-left font-semibold text-slate-700">Enchantment</th>
-                            <td class="px-4 py-3 text-slate-900 font-semibold">+<span x-text="selectedEnchant"></span></td>
-                        </tr>
-                        <tr>
-                            <th class="px-4 py-3 text-left font-semibold text-slate-700">Item Power</th>
-                            <td class="px-4 py-3 text-slate-900 font-semibold">{{ $weapon->item_power }}</td>
-                        </tr>
-                        <tr class="bg-slate-50">
-                            <th class="px-4 py-3 text-left font-semibold text-slate-700">Type</th>
-                            <td class="px-4 py-3 text-slate-900 capitalize">{{ $weapon->type }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 space-y-6">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <h2 class="text-xl font-semibold text-slate-900">Variants</h2>
-                <p class="text-sm text-slate-600" x-text="`Selected: Enchantment +${selectedEnchant}`"></p>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wide">Enchantment</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <template x-for="level in enchantments" :key="level">
-                            <button
-                                type="button"
-                                @click="selectedEnchant = level"
-                                :aria-pressed="selectedEnchant === level"
-                                class="rounded-full border px-4 py-2 text-sm font-semibold transition"
-                                :class="selectedEnchant === level ? 'bg-amber-500 text-white border-amber-500 shadow' : 'bg-white text-slate-700 border-slate-200 hover:border-amber-200 hover:text-amber-700'"
-                            >
-                                +<span x-text="level"></span>
-                            </button>
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </section>
+<div class="section-header">
+    <div class="eyebrow">Карточка оружия</div>
+    <h1>{{ $weapon->name }}</h1>
+    <p>{{ $weapon->description }}</p>
+    <div class="tags">
+        <span class="chip">{{ $weapon->weaponLine?->name ?? 'Без линии' }}</span>
+        <span class="chip">Тип: {{ $weapon->type }}</span>
+        <a class="btn" href="{{ route('weapons.index') }}">← К списку оружия</a>
     </div>
+</div>
+
+<section class="panel" x-data="{ enchantments: [0,1,2,3], selectedEnchant: @json((int) $weapon->enchantment) }">
+    <div class="subtle-title">Характеристики</div>
+    <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px;">
+        <div class="card">
+            <div class="meta">Item Power</div>
+            <h2 style="margin-top:6px;">{{ $weapon->item_power }}</h2>
+            <p class="muted">Базовая мощь предмета, меняется от зачарования.</p>
+        </div>
+        <div class="card">
+            <div class="meta">Зачарование</div>
+            <h2 style="margin-top:6px;">+<span x-text="selectedEnchant"></span></h2>
+            <p class="muted">Выберите уровень, чтобы отметить редкость.</p>
+        </div>
+    </div>
+    <div class="panel" style="margin-top:14px; padding:14px;">
+        <p class="subtle-title">Варианты зачарования</p>
+        <div class="tags" style="margin-top:8px;">
+            <template x-for="level in enchantments" :key="level">
+                <button type="button" @click="selectedEnchant = level" :aria-pressed="selectedEnchant === level" :class="selectedEnchant === level ? 'btn' : 'chip'" style="border: none; background: none; padding: 0;">
+                    <span class="chip" :style="selectedEnchant === level ? 'border-color: var(--gold-strong); box-shadow: 0 8px 18px rgba(242,200,124,0.18);' : ''">+<span x-text="level"></span></span>
+                </button>
+            </template>
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="subtle-title">Дополнительно</div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Линия</th>
+                <td>{{ $weapon->weaponLine?->name ?? '—' }}</td>
+            </tr>
+            <tr>
+                <th>Тип</th>
+                <td class="capitalize">{{ $weapon->type }}</td>
+            </tr>
+            <tr>
+                <th>Зачарование</th>
+                <td>+<span x-text="selectedEnchant"></span></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
 @endsection
