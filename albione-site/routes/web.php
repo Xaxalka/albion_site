@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\WeaponSkillController as AdminWeaponSkillControll
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SkillMediaController;
-use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\WikiController;
 use App\Http\Controllers\WeaponController;
 use App\Http\Controllers\WeaponLineController;
@@ -31,10 +30,6 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
-
-    Route::get('/email/verify', [VerificationController::class, 'show'])->name('verification.notice');
-    Route::post('/email/verify', [VerificationController::class, 'store'])->name('verification.verify');
-    Route::post('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 });
 
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
