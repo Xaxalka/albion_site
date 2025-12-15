@@ -17,9 +17,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Avoid duplicate test user on repeated seeding
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => bcrypt('password')]
+            ['name' => 'Test User', 'username' => 'testuser', 'password' => 'password']
+        );
+
+        User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            ['name' => 'Admin', 'username' => 'admin', 'password' => 'admin']
         );
 
         $this->call([
