@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en" x-data="themeToggle()" x-init="init()" :data-theme="theme">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +7,59 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        (() => {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('themeToggle', () => ({
+                theme: document.documentElement.getAttribute('data-theme') || 'light',
+                init() {
+                    this.apply(this.theme);
+                },
+                toggle() {
+                    this.theme = this.theme === 'dark' ? 'light' : 'dark';
+                    this.apply(this.theme);
+                    localStorage.setItem('theme', this.theme);
+                },
+                apply(theme) {
+                    document.documentElement.setAttribute('data-theme', theme);
+                },
+            }));
+        });
+    </script>
     <style>
         :root {
-            color-scheme: dark;
-            --bg: #0c0f17;
-            --bg-2: #0f1624;
-            --gold: #d7b676;
-            --gold-strong: #f2c87c;
-            --text: #e5e7eb;
-            --muted: #b6c2cf;
-            --panel: #0d131f;
-            --shadow: rgba(0, 0, 0, 0.45);
-            --line: rgba(215, 182, 118, 0.35);
+            --page-bg: #f8fafc;
+            --panel-bg: #ffffff;
+            --card-bg: #f1f5f9;
+            --border-color: #e2e8f0;
+            --text-color: #0f172a;
+            --muted-color: #475569;
+            --tag-bg: #eef2ff;
+            --tag-text: #4338ca;
+            --link: #4338ca;
+            --link-hover: #312e81;
         }
-        * { box-sizing: border-box; }
+        [data-theme="dark"] {
+            color-scheme: dark;
+            --page-bg: #0b1220;
+            --panel-bg: #0f172a;
+            --card-bg: #111827;
+            --border-color: #1f2937;
+            --text-color: #e2e8f0;
+            --muted-color: #cbd5e1;
+            --tag-bg: #1e1b4b;
+            --tag-text: #c7d2fe;
+            --link: #c084fc;
+            --link-hover: #a855f7;
+        }
         body {
             margin: 0;
             background: radial-gradient(circle at 18% 22%, rgba(215,182,118,0.08), transparent 35%),
@@ -103,66 +141,27 @@
             outline: none;
             box-shadow: 0 10px 26px rgba(242,200,124,0.18);
         }
-        .content-area {
-            margin-top: 26px;
-            display: grid;
-            gap: 20px;
+        .theme-panel {
+            background-color: var(--panel-bg);
+            border-color: var(--border-color);
         }
-        .section-header {
-            display: grid;
-            gap: 8px;
+        .theme-card {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
         }
-        .eyebrow {
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 700;
-            color: var(--gold-strong);
-            font-size: 12px;
+        .theme-muted {
+            color: var(--muted-color);
         }
-        h1, h2, h3 { font-family: 'Cinzel', 'Inter', serif; margin: 0; color: #fff; }
-        h1 { font-size: clamp(26px, 4vw, 36px); letter-spacing: 0.02em; }
-        h2 { font-size: 22px; }
-        h3 { font-size: 18px; }
-        p { margin: 0; color: var(--muted); line-height: 1.6; }
-        .panel {
-            position: relative;
-            border-radius: 18px;
-            padding: 18px;
-            background: linear-gradient(160deg, rgba(13,19,31,0.95), rgba(11,16,25,0.92));
-            border: 1px solid var(--line);
-            box-shadow: 0 14px 34px var(--shadow);
-            overflow: hidden;
+        .theme-tag {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+            border-color: var(--border-color);
         }
-        .panel::before {
-            content: "";
-            position: absolute;
-            inset: 14px;
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 14px;
-            pointer-events: none;
+        .theme-link {
+            color: var(--link);
         }
-        .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-        .card { position: relative; padding: 16px; border-radius: 16px; border: 1px solid var(--line); background: linear-gradient(150deg, rgba(16,23,35,0.95), rgba(13,19,31,0.82)); box-shadow: 0 14px 30px var(--shadow); overflow: hidden; }
-        .card::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 20% 20%, rgba(242,200,124,0.12), transparent 45%); opacity: 0.8; pointer-events: none; }
-        .meta { color: var(--muted); font-size: 13px; letter-spacing: 0.02em; }
-        .chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text); font-size: 14px; letter-spacing: 0.02em; }
-        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .muted { color: var(--muted); }
-        .subtle-title { color: var(--gold-strong); font-weight: 700; letter-spacing: 0.06em; font-size: 12px; text-transform: uppercase; }
-        .stat-box { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(242,200,124,0.08); color: #fff; font-weight: 700; }
-        .table { width: 100%; border-collapse: collapse; margin-top: 10px; overflow: hidden; border-radius: 12px; border: 1px solid var(--line); }
-        .table th, .table td { padding: 12px; text-align: left; }
-        .table tr:nth-child(odd) { background: rgba(255,255,255,0.02); }
-        .table th { color: var(--gold-strong); letter-spacing: 0.03em; font-weight: 700; }
-        form { display: grid; gap: 10px; }
-        label { font-weight: 600; color: var(--text); font-size: 14px; }
-        select, input, textarea { width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--text); }
-        button, .btn { display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(140deg, rgba(242,200,124,0.12), rgba(16,23,35,0.9)); color: #fff; font-weight: 700; letter-spacing: 0.02em; cursor: pointer; text-decoration: none; transition: 160ms ease; }
-        button:hover, .btn:hover { border-color: var(--gold-strong); box-shadow: 0 10px 24px rgba(242,200,124,0.2); transform: translateY(-1px); }
-        .alert { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: rgba(242,200,124,0.08); color: #fff; }
-        .footer { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 14px; text-align: center; }
-        @media (max-width: 720px) {
-            .site-header { flex-direction: column; align-items: flex-start; }
+        .theme-link:hover {
+            color: var(--link-hover);
         }
     </style>
 </head>
