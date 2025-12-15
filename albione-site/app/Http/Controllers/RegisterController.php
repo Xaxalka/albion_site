@@ -39,12 +39,17 @@ class RegisterController extends Controller
 
         $data = $request->validate($rules);
 
-        $user = User::create([
+        $userData = [
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'username' => $supportsUsername ? $data['username'] : null,
-        ]);
+        ];
+
+        if ($supportsUsername) {
+            $userData['username'] = $data['username'];
+        }
+
+        $user = User::create($userData);
 
         $this->verificationCodes->send($user);
 
