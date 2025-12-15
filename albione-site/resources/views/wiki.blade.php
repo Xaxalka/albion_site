@@ -328,6 +328,32 @@
             content: "⇣";
             color: var(--gold-strong);
         }
+        .cta-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            width: 100%;
+            max-width: 620px;
+            margin-top: 10px;
+        }
+        .cta-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: linear-gradient(140deg, rgba(242,200,124,0.14), rgba(16,23,35,0.9));
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            box-shadow: 0 10px 26px var(--shadow);
+            transition: 160ms ease;
+        }
+        .cta-link span { color: var(--muted); font-size: 13px; font-weight: 600; }
+        .cta-link:hover { border-color: var(--gold-strong); transform: translateY(-1px); box-shadow: 0 12px 30px rgba(242,200,124,0.22); }
         @media (max-width: 700px) {
             .tab-bar { top: 10px; grid-template-columns: 1fr; max-width: 420px; }
             .tab { font-size: 14px; padding: 12px 14px; min-height: 70px; }
@@ -348,6 +374,13 @@
             <button class="tab" data-tab="content">Контент <span>Приключения</span></button>
             <button class="tab" data-tab="builds">Билды <span>Тактика</span></button>
         </div>
+
+        <nav class="cta-bar" aria-label="Быстрый переход по разделам">
+            <a class="cta-link" href="{{ route('weapon-lines.index') }}">Линии оружия <span>Ветки и умения</span></a>
+            <a class="cta-link" href="{{ route('weapons.index') }}">Оружие <span>Каталог и фильтры</span></a>
+            <a class="cta-link" href="{{ route('wiki') }}#builds">Билды <span>Сборки по ролям</span></a>
+            <a class="cta-link" href="{{ route('admin.weapons.index') }}">Админка <span>Управление данными</span></a>
+        </nav>
     </header>
 
     <main class="layout-grid">
