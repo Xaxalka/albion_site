@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::updateOrCreate(
+        User::firstOrCreate(
             ['email' => 'admin@example.com'],
             ['name' => 'admin', 'password' => bcrypt('admin')]
         );
