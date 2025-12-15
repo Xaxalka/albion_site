@@ -1,264 +1,256 @@
-<!doctype html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Albion Codex</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            color-scheme: dark;
-            --bg: #0c0f17;
-            --bg-2: #0f1624;
-            --gold: #d7b676;
-            --gold-strong: #f2c87c;
-            --text: #e5e7eb;
-            --muted: #b6c2cf;
-            --panel: #0d131f;
-            --shadow: rgba(0, 0, 0, 0.45);
-            --line: rgba(215, 182, 118, 0.35);
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            background: radial-gradient(circle at 18% 22%, rgba(215,182,118,0.08), transparent 35%),
-                        radial-gradient(circle at 82% 12%, rgba(255,189,89,0.08), transparent 32%),
-                        linear-gradient(145deg, var(--bg) 0%, var(--bg-2) 100%);
-            color: var(--text);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
-        }
-        .page {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 20px 72px;
-            position: relative;
-        }
-        .page::before {
-            content: "";
-            position: absolute;
-            inset: 18% auto 10% 5%;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, rgba(242,200,124,0.16), transparent 70%);
-            filter: blur(8px);
-            pointer-events: none;
-        }
-        header.hero {
-            text-align: center;
-            display: grid;
-            gap: 16px;
-            justify-items: center;
-        }
-        .hero__crest {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            background: rgba(13,19,31,0.7);
-            box-shadow: 0 10px 30px var(--shadow);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--gold-strong);
-        }
-        .hero__title {
-            font-family: 'Cinzel', 'Inter', serif;
-            margin: 0;
-            font-size: clamp(28px, 4vw, 42px);
-            letter-spacing: 0.02em;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.45);
-        }
-        .hero__subtitle {
-            margin: 0;
-            max-width: 780px;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-        .tab-bar {
-            margin-top: 12px;
-            display: grid;
-            grid-template-columns: repeat(2, minmax(170px, 1fr));
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            backdrop-filter: blur(10px);
-            padding: 12px;
-            background: linear-gradient(120deg, rgba(13,19,31,0.9), rgba(13,19,31,0.75));
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            box-shadow: 0 12px 36px var(--shadow);
-            max-width: 560px;
-            width: 100%;
-            justify-self: center;
-        }
-        .tab {
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: 14px 16px 12px;
-            background: radial-gradient(circle at 20% 18%, rgba(242,200,124,0.08), rgba(16,23,35,0.9));
-            color: var(--text);
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 6px;
-            cursor: pointer;
-            transition: 180ms ease;
-            text-align: left;
-            min-height: 78px;
-            position: relative;
-            overflow: hidden;
-        }
-        .tab::after {
-            content: "";
-            position: absolute;
-            inset: 6px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.03);
-            opacity: 0;
-            transition: 180ms ease;
-        }
-        .tab span { color: var(--muted); font-size: 13px; font-weight: 600; }
-        .tab.active {
-            border-color: var(--gold-strong);
-            box-shadow: 0 10px 26px rgba(242,200,124,0.22), 0 0 0 1px rgba(242,200,124,0.2) inset;
-            background: linear-gradient(140deg, rgba(242,200,124,0.18), rgba(16,23,35,0.96));
-            color: #fff;
-        }
-        .tab.active::after { opacity: 1; }
-        .tab:hover { border-color: var(--gold); transform: translateY(-1px); }
-        .layout-grid {
-            display: grid;
-            gap: 24px;
-            margin-top: 28px;
-            justify-items: center;
-        }
-        .layout-grid { display: grid; gap: 24px; margin-top: 28px; }
-        .sigils {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            width: 100%;
-            max-width: 960px;
-            justify-items: center;
-        }
-        .sigil-card {
-            position: relative;
-            padding: 18px 16px;
-            border-radius: 16px;
-            background: linear-gradient(150deg, rgba(16,23,35,0.95), rgba(13,19,31,0.8));
-            border: 1px solid var(--line);
-            box-shadow: 0 14px 30px var(--shadow);
-            overflow: hidden;
-            width: 100%;
-        }
-        .sigil-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 20% 20%, rgba(242,200,124,0.12), transparent 45%);
-            opacity: 0.8;
-            pointer-events: none;
-        }
-        .sigil-title {
-            font-family: 'Cinzel', 'Inter', serif;
-            font-size: 22px;
-            margin: 6px 0 4px;
-            color: var(--gold-strong);
-            text-shadow: 0 4px 12px rgba(242,200,124,0.15);
-        }
-        .sigil-name {
-            margin: 0;
-            font-size: 18px;
-            letter-spacing: 0.03em;
-            color: #fff;
-        }
-        .sigil-rune {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            border-radius: 10px;
-            border: 1px solid var(--line);
-            background: rgba(255,255,255,0.04);
-            color: var(--gold);
-            letter-spacing: 0.08em;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        .content-panel {
-            position: relative;
-            border-radius: 18px;
-            padding: 20px;
-            background: linear-gradient(160deg, rgba(13,19,31,0.95), rgba(11,16,25,0.92));
-            border: 1px solid var(--line);
-            box-shadow: 0 14px 34px var(--shadow);
-            overflow: hidden;
-            width: 100%;
-            max-width: 900px;
-            justify-self: center;
-        }
-        .content-panel::before {
-            content: "";
-            position: absolute;
-            inset: 14px;
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 14px;
-            pointer-events: none;
-        }
-        .content-placeholder h3 {
-            margin: 0 0 6px;
-            font-size: 20px;
-            font-family: 'Cinzel', 'Inter', serif;
-            color: var(--gold);
-        }
-        .content-placeholder p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-        .content-actions {
-            margin-top: 14px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .chip {
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid var(--line);
-            background: rgba(255,255,255,0.03);
-            color: var(--text);
-            font-size: 14px;
-            letter-spacing: 0.02em;
-        }
-        .scroll-hint {
-            margin-top: 10px;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-        }
-        .scroll-hint::before {
-            content: "⇣";
-            color: var(--gold-strong);
-        }
-        @media (max-width: 700px) {
-            .tab-bar { top: 10px; grid-template-columns: 1fr; max-width: 420px; }
-            .tab { font-size: 14px; padding: 12px 14px; min-height: 70px; }
-            .sigil-title { font-size: 20px; }
-        }
-    </style>
-</head>
-<body>
+@php($title = 'Albion Codex — Wiki')
+@extends('layouts.app')
+
+@section('content')
+<style>
+    .page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 10px 0 40px;
+        position: relative;
+    }
+    .page::before {
+        content: "";
+        position: absolute;
+        inset: 12% auto 8% 4%;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(242,200,124,0.16), transparent 70%);
+        filter: blur(8px);
+        pointer-events: none;
+    }
+    header.hero {
+        text-align: center;
+        display: grid;
+        gap: 16px;
+        justify-items: center;
+    }
+    .hero__crest {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(13,19,31,0.7);
+        box-shadow: 0 10px 30px var(--shadow);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--gold-strong);
+    }
+    .hero__title {
+        font-family: 'Cinzel', 'Inter', serif;
+        margin: 0;
+        font-size: clamp(28px, 4vw, 42px);
+        letter-spacing: 0.02em;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.45);
+    }
+    .hero__subtitle {
+        margin: 0;
+        max-width: 780px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+    .tab-bar {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(170px, 1fr));
+        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        padding: 12px;
+        background: linear-gradient(120deg, rgba(13,19,31,0.9), rgba(13,19,31,0.75));
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 12px 36px var(--shadow);
+        max-width: 560px;
+        width: 100%;
+        justify-self: center;
+    }
+    .tab {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 16px 12px;
+        background: radial-gradient(circle at 20% 18%, rgba(242,200,124,0.08), rgba(16,23,35,0.9));
+        color: var(--text);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        cursor: pointer;
+        transition: 180ms ease;
+        text-align: left;
+        min-height: 78px;
+        position: relative;
+        overflow: hidden;
+    }
+    .tab::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.03);
+        opacity: 0;
+        transition: 180ms ease;
+    }
+    .tab span { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .tab.active {
+        border-color: var(--gold-strong);
+        box-shadow: 0 10px 26px rgba(242,200,124,0.22), 0 0 0 1px rgba(242,200,124,0.2) inset;
+        background: linear-gradient(140deg, rgba(242,200,124,0.18), rgba(16,23,35,0.96));
+        color: #fff;
+    }
+    .tab.active::after { opacity: 1; }
+    .tab:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .layout-grid { display: grid; gap: 24px; margin-top: 28px; justify-items: center; }
+    .sigils {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        width: 100%;
+        max-width: 960px;
+        justify-items: center;
+    }
+    .sigil-card {
+        position: relative;
+        padding: 18px 16px;
+        border-radius: 16px;
+        background: linear-gradient(150deg, rgba(16,23,35,0.95), rgba(13,19,31,0.8));
+        border: 1px solid var(--line);
+        box-shadow: 0 14px 30px var(--shadow);
+        overflow: hidden;
+    }
+    .sigil-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 20% 20%, rgba(242,200,124,0.12), transparent 45%);
+        opacity: 0.8;
+        pointer-events: none;
+    }
+    .sigil-title {
+        font-family: 'Cinzel', 'Inter', serif;
+        font-size: 22px;
+        margin: 6px 0 4px;
+        color: var(--gold-strong);
+        text-shadow: 0 4px 12px rgba(242,200,124,0.15);
+    }
+    .sigil-name { margin: 0; font-size: 18px; letter-spacing: 0.03em; color: #fff; }
+    .sigil-rune {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.04);
+        color: var(--gold);
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .content-panel {
+        position: relative;
+        border-radius: 18px;
+        padding: 20px;
+        background: linear-gradient(160deg, rgba(13,19,31,0.95), rgba(11,16,25,0.92));
+        border: 1px solid var(--line);
+        box-shadow: 0 14px 34px var(--shadow);
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+    }
+    .content-panel::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border: 1px solid rgba(255,255,255,0.04);
+        border-radius: 14px;
+        pointer-events: none;
+    }
+    .content-placeholder h3 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        font-family: 'Cinzel', 'Inter', serif;
+        color: var(--gold);
+    }
+    .content-placeholder p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .content-body { margin-top: 16px; display: grid; gap: 14px; }
+    .info-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        background: linear-gradient(120deg, rgba(255,255,255,0.02), rgba(13,19,31,0.8));
+        box-shadow: 0 10px 26px var(--shadow);
+        display: grid;
+        gap: 10px;
+    }
+    .info-card__header { display: flex; align-items: center; gap: 12px; }
+    .info-card__title { margin: 0; font-size: 17px; color: #fff; }
+    .info-card__meta { color: var(--muted); font-size: 14px; }
+    .info-card__img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 8px;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+        padding: 6px 10px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+    .branch-grid, .gallery-grid { display: grid; gap: 12px; }
+    .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .gallery-grid img { width: 100%; border-radius: 12px; border: 1px solid var(--line); }
+    .variants-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .variant {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        display: grid;
+        gap: 6px;
+        background: rgba(255,255,255,0.03);
+        min-width: 180px;
+    }
+    .content-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        font-size: 14px;
+        letter-spacing: 0.02em;
+    }
+    .scroll-hint {
+        margin-top: 10px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+    .scroll-hint::before { content: "⇣"; color: var(--gold-strong); }
+    @media (max-width: 700px) {
+        .tab-bar { top: 10px; grid-template-columns: 1fr; max-width: 420px; }
+        .tab { font-size: 14px; padding: 12px 14px; min-height: 70px; }
+        .sigil-title { font-size: 20px; }
+    }
+</style>
+
 <div class="page">
     <header class="hero">
         <div class="hero__crest">Albion Codex — Дом Русской Гильдии</div>
@@ -306,37 +298,135 @@
                 <span class="chip">Категория: Мобы</span>
                 <span class="chip">Стиль: Темное фэнтези</span>
             </div>
+            <div id="contentArea" class="content-body" aria-label="Динамический контент"></div>
             <div class="scroll-hint">Навигация закрепится сверху при прокрутке.</div>
         </section>
     </main>
 </div>
 
 <script>
+    const mobsData = @json($mobs);
+    const gearData = {
+        branches: @json($weaponBranches),
+        armors: @json($armors)
+    };
+    const contentsData = @json($contents);
+    const buildsData = @json($builds);
+
     const tabs = document.querySelectorAll('.tab');
     const contentTitle = document.getElementById('contentTitle');
     const contentText = document.getElementById('contentText');
     const contentActions = document.getElementById('contentActions');
+    const contentArea = document.getElementById('contentArea');
+
+    const escapeHtml = (str) => (str || '').replace(/[&<>'"]/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;',
+    })[char]);
+
+    const renderMobs = () => mobsData.map(mob => `
+        <article class="info-card">
+            <div class="info-card__header">
+                <img src="${escapeHtml(mob.image)}" alt="${escapeHtml(mob.name)}" class="info-card__img" loading="lazy">
+                <div>
+                    <h4 class="info-card__title">${escapeHtml(mob.name)}</h4>
+                    <div class="info-card__meta">${escapeHtml(mob.tier_range)}</div>
+                </div>
+            </div>
+            <p class="content-placeholder__text">${escapeHtml(mob.description)}</p>
+            <div class="pill-row">${mob.skills.map(skill => `<span class="pill">${escapeHtml(skill)}</span>`).join('')}</div>
+        </article>
+    `).join('');
+
+    const renderGear = () => {
+        const branches = gearData.branches.map(branch => `
+            <article class="info-card">
+                <div class="info-card__header">
+                    <div class="pill">${escapeHtml(branch.icon)}</div>
+                    <div>
+                        <h4 class="info-card__title">${escapeHtml(branch.name)}</h4>
+                        <div class="info-card__meta">${escapeHtml(branch.summary)}</div>
+                    </div>
+                </div>
+                <div class="branch-grid">
+                    <div><strong>Q навыки:</strong> ${branch.q_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
+                    <div><strong>W навыки:</strong> ${branch.w_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
+                    <div><strong>Пассив:</strong> ${escapeHtml(branch.passive.name)}</div>
+                </div>
+                <div class="variants-row">
+                    ${branch.variants.map(variant => `
+                        <div class="variant">
+                            <div class="info-card__meta">${escapeHtml(variant.role)}</div>
+                            <div class="info-card__title">${escapeHtml(variant.name)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </article>
+        `).join('');
+
+        const armors = gearData.armors.map(armor => `
+            <article class="info-card">
+                <div class="info-card__header">
+                    <div class="pill">${escapeHtml(armor.type)}</div>
+                    <h4 class="info-card__title">${escapeHtml(armor.name)}</h4>
+                </div>
+                <p class="content-placeholder__text">${escapeHtml(armor.description)}</p>
+            </article>
+        `).join('');
+
+        return branches + armors;
+    };
+
+    const renderContents = () => contentsData.map(entry => `
+        <article class="info-card">
+            <div class="info-card__header">
+                <img src="${escapeHtml(entry.icon)}" alt="${escapeHtml(entry.name)}" class="info-card__img" loading="lazy">
+                <div>
+                    <h4 class="info-card__title">${escapeHtml(entry.name)}</h4>
+                    <div class="info-card__meta">${escapeHtml(entry.description)}</div>
+                </div>
+            </div>
+            <div class="gallery-grid">
+                ${entry.gallery.map(src => `<img src="${escapeHtml(src)}" alt="${escapeHtml(entry.name)}" loading="lazy">`).join('')}
+            </div>
+        </article>
+    `).join('');
+
+    const renderBuilds = () => buildsData.map(build => `
+        <article class="info-card">
+            <h4 class="info-card__title">${escapeHtml(build.name)}</h4>
+            <p class="content-placeholder__text">${escapeHtml(build.description)}</p>
+            <div class="pill-row">${build.tags.map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join('')}</div>
+        </article>
+    `).join('');
 
     const tabContent = {
         mobs: {
             title: 'Мобы — обзор угроз',
-            text: 'Выберите раздел для просмотра информации. Здесь появятся подборки боссов, рейдовых монстров и их умения.',
+            text: 'Подборки боссов, рейдовых монстров и их умения обновятся сразу после выбора вкладки.',
             chips: ['Категория: Мобы', 'Тактика: Контроль и уклонение'],
+            renderer: renderMobs,
         },
         gear: {
             title: 'Снаряжение — кузница силы',
             text: 'Просматривайте уникальные сетовые бонусы, сравнивайте артефактные предметы и собирайте собственные комплекты.',
-            chips: ['Категория: Снаряжение', 'Стили: Пластинa, кожа, ткань'],
+            chips: ['Категория: Снаряжение', 'Стили: Пластина, кожа, ткань'],
+            renderer: renderGear,
         },
         content: {
             title: 'Контент — где искать славу',
             text: 'Данжи, дороги Авалона, вторжения и особые события появятся в этом блоке с картами и мини-галереей.',
             chips: ['Категория: Контент', 'Режимы: PvE и PvP'],
+            renderer: renderContents,
         },
         builds: {
             title: 'Билды — стратегии и роли',
             text: 'Фильтруйте по ролям и активности: соло PvP, группы, или масштабные ZvZ. Заглушка готова принять ваши сетапы.',
             chips: ['Категория: Билды', 'Фокус: Роли и навыки'],
+            renderer: renderBuilds,
         },
     };
 
@@ -347,6 +437,7 @@
         contentTitle.textContent = data.title;
         contentText.textContent = data.text;
         contentActions.innerHTML = data.chips.map(chip => `<span class="chip">${chip}</span>`).join('');
+        contentArea.innerHTML = data.renderer ? data.renderer() : '';
     };
 
     tabs.forEach(btn => btn.addEventListener('click', () => setActiveTab(btn.dataset.tab)));
@@ -361,5 +452,4 @@
 
     observer.observe(tabBar);
 </script>
-</body>
-</html>
+@endsection
