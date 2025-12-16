@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Seeders\WeaponSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
@@ -42,11 +43,11 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'xaxalka@example.com'],
             [
                 'name' => 'xaxalka',
-                'password' => 'asddsa123321',
+                'password' => Hash::make('asddsa123321'),
                 'email_verified_at' => now(),
                 'username' => $supportsUsername ? 'xaxalka' : null,
                 'is_admin' => true,
