@@ -31,3 +31,15 @@ test('seeded admin can login using the provided credentials', function () {
     $response->assertRedirect(route('wiki'));
     $this->assertAuthenticatedAs($admin);
 });
+
+test('seeded admin login trims accidental whitespace', function () {
+    $admin = User::where('email', 'xaxalka@example.com')->first();
+
+    $response = $this->post(route('login.store'), [
+        'login' => '  xaxalka  ',
+        'password' => '  asddsa123321  ',
+    ]);
+
+    $response->assertRedirect(route('wiki'));
+    $this->assertAuthenticatedAs($admin);
+});

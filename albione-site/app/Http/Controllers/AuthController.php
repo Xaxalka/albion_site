@@ -22,8 +22,8 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $login = $data['login'];
-        $password = $data['password'];
+        $login = trim($data['login']);
+        $password = trim($data['password']);
 
         $credentialOptions = [
             ['email' => $login, 'password' => $password],
