@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
                 'password' => 'password',
                 'email_verified_at' => now(),
                 'username' => $supportsUsername ? 'testuser' : null,
-                'is_admin' => false,
+                'is_admin' => true,
             ]
         );
 
@@ -38,6 +38,17 @@ class DatabaseSeeder extends Seeder
                 'password' => 'admin',
                 'email_verified_at' => now(),
                 'username' => $supportsUsername ? 'admin' : null,
+                'is_admin' => true,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'xaxalka@example.com'],
+            [
+                'name' => 'xaxalka',
+                'password' => 'asddsa123321',
+                'email_verified_at' => now(),
+                'username' => $supportsUsername ? 'xaxalka' : null,
                 'is_admin' => true,
             ]
         );
