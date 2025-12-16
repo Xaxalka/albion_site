@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'xaxalka@example.com'],
             [
                 'name' => 'xaxalka',
