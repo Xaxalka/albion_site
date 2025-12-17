@@ -6,6 +6,11 @@
     <div class="eyebrow">Карточка оружия</div>
     <h1>{{ $weapon->name }}</h1>
     <p>{{ $weapon->description }}</p>
+    @if($weapon->image)
+        <div style="margin-top:12px;">
+            <img src="{{ $weapon->image }}" alt="Изображение {{ $weapon->name }}" style="max-height:240px; border-radius:14px; border:1px solid var(--line); box-shadow:0 14px 30px var(--shadow);">
+        </div>
+    @endif
     <div class="tags">
         <span class="chip">{{ $weapon->weaponLine?->name ?? 'Без линии' }}</span>
         <span class="chip">Тип: {{ $weapon->type }}</span>

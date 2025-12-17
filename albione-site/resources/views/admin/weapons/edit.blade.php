@@ -42,6 +42,12 @@
             <label class="block text-sm font-medium text-slate-700">Image URL</label>
             <input name="image" value="{{ old('image', $weapon->image) }}" class="mt-1 w-full rounded border-slate-300">
             @error('image')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            @if($weapon->image)
+                <div class="mt-3">
+                    <div class="text-xs text-slate-600 mb-1">Preview</div>
+                    <img src="{{ $weapon->image }}" alt="Preview {{ $weapon->name }}" class="max-h-48 rounded border border-slate-200">
+                </div>
+            @endif
         </div>
         <div>
             <label class="block text-sm font-medium text-slate-700">Author Notes</label>

@@ -42,6 +42,12 @@
             <label class="block text-sm font-medium text-slate-700">Image URL</label>
             <input name="image" value="{{ old('image') }}" placeholder="https://example.com/placeholder.png" class="mt-1 w-full rounded border-slate-300">
             @error('image')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            @if(old('image'))
+                <div class="mt-3">
+                    <div class="text-xs text-slate-600 mb-1">Preview</div>
+                    <img src="{{ old('image') }}" alt="Preview" class="max-h-48 rounded border border-slate-200">
+                </div>
+            @endif
         </div>
         <div>
             <label class="block text-sm font-medium text-slate-700">Author Notes</label>
