@@ -4,8 +4,9 @@ use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(DatabaseSeeder::class);
