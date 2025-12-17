@@ -176,6 +176,7 @@
             <a href="{{ route('weapons.index') }}">Оружие</a>
             @auth
                 @if(Auth::user()?->is_admin)
+                    <a href="{{ route('admin.dashboard') }}">Админ-панель</a>
                     <a href="{{ route('admin.weapon-lines.index') }}">Ветки (админ)</a>
                     <a href="{{ route('admin.weapons.index') }}">Оружие (админ)</a>
                 @endif
