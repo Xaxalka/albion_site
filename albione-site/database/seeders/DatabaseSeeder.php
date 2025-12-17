@@ -48,8 +48,9 @@ class DatabaseSeeder extends Seeder
             $xaxalkaUser['username'] = 'xaxalka';
         }
 
-        User::firstOrCreate(['email' => 'test@example.com'], $testUser);
-        User::firstOrCreate(['email' => 'admin@example.com'], $adminUser);
+        // Ensure baseline accounts keep their admin status even if they already exist
+        User::updateOrCreate(['email' => 'test@example.com'], $testUser);
+        User::updateOrCreate(['email' => 'admin@example.com'], $adminUser);
         User::updateOrCreate(['email' => 'xaxalka@example.com'], $xaxalkaUser);
 
         $this->call([
