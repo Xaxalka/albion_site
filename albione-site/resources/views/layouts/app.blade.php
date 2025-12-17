@@ -85,6 +85,11 @@
         .nav-links form {
             margin: 0;
         }
+        .nav-links__admin {
+            background: linear-gradient(140deg, rgba(242,200,124,0.18), rgba(16,23,35,0.95));
+            border-color: var(--gold-strong);
+            color: #fff;
+        }
         .nav-links a {
             padding: 10px 12px;
             border-radius: 12px;
@@ -175,12 +180,14 @@
             $isAdmin = $isAdmin ?? (bool) $currentUser?->isAdmin();
         @endphp
         <nav class="nav-links" aria-label="Главная навигация">
+            @if($isAdmin)
+                <a class="nav-links__admin" href="{{ route('admin.dashboard') }}">Админ-панель</a>
+            @endif
             <a href="{{ route('wiki') }}">Главная</a>
             <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
             <a href="{{ route('weapons.index') }}">Оружие</a>
             @if($currentUser)
                 @if($isAdmin)
-                    <a href="{{ route('admin.dashboard') }}">Админ-панель</a>
                     <a href="{{ route('admin.weapon-lines.index') }}">Ветки (админ)</a>
                     <a href="{{ route('admin.weapons.index') }}">Оружие (админ)</a>
                 @endif
