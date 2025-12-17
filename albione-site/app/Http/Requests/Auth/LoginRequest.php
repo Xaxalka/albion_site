@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Schema;
 
 class LoginRequest extends FormRequest
 {
@@ -13,8 +14,14 @@ class LoginRequest extends FormRequest
 
     public function rules(): array
     {
+        $supportsUsername = Schema::hasColumn('users', 'username');
+
+        $loginRules = $supportsUsername
+            ? ['required', 'string']
+            : ['required', 'string', 'email'];
+
         return [
-            'login' => ['required', 'string'],
+            'login' => $loginRules,
             'password' => ['required', 'string'],
         ];
     }
