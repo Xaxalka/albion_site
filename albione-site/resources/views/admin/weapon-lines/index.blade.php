@@ -1,49 +1,44 @@
-@php($title = 'Admin Weapon Lines')
+@php($title = 'Панель веток')
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-900">Manage Weapon Lines</h1>
-            <p class="text-sm text-slate-600">Shared Q/W/Passive hubs.</p>
+    <div class="section-header">
+        <div class="eyebrow">Администрирование</div>
+        <h1>Панель управления ветками</h1>
+        <p>Только администраторы могут изменять ветки оружия, их слаг и описание. Отсюда удобно перейти к редактированию нужной ветки или открыть её на сайте.</p>
+        <div class="tags" style="margin-top:12px;">
+            <a class="btn" href="{{ route('admin.weapon-lines.create') }}">Добавить новую ветку</a>
         </div>
-        <a href="{{ route('admin.weapon-lines.create') }}" class="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-            Add Line
-        </a>
     </div>
 
-    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
-        <table class="min-w-full divide-y divide-slate-200">
-            <thead class="bg-slate-50">
-                <tr class="text-left text-sm font-semibold text-slate-700">
-                    <th class="px-4 py-3">Name</th>
-                    <th class="px-4 py-3">Slug</th>
-                    <th class="px-4 py-3">Updated</th>
-                    <th class="px-4 py-3"></th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200 text-sm text-slate-700">
-                @forelse($lines as $line)
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-4 py-3 font-semibold text-indigo-700">
-                            <a href="{{ route('weapon-lines.show', $line->slug) }}" class="hover:underline">{{ $line->name }}</a>
-                        </td>
-                        <td class="px-4 py-3">{{ $line->slug }}</td>
-                        <td class="px-4 py-3">{{ $line->updated_at->format('Y-m-d') }}</td>
-                        <td class="px-4 py-3 text-right">
-                            <a href="{{ route('admin.weapon-lines.edit', $line->id) }}" class="text-indigo-700 hover:text-indigo-800">Edit</a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="px-4 py-4 text-center text-slate-600">No lines yet.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    <section class="panel">
+        <div class="subtle-title">Активные ветки</div>
+        <p class="muted" style="margin-top:6px;">Ниже список всех веток, доступных для редактирования администраторам. Дата обновления, количество оружия и общих навыков помогают быстро найти нужную линию.</p>
 
-    <div class="mt-4">
-        {{ $lines->links() }}
-    </div>
+        <div class="card-grid" style="margin-top:16px;">
+            @forelse($lines as $line)
+                <article class="card">
+                    <div class="meta">{{ $line->slug }} · обновлено {{ $line->updated_at->format('d.m.Y') }}</div>
+                    <h3 style="margin-top:8px;">{{ $line->name }}</h3>
+                    <p class="muted" style="margin-top:8px;">{{ $line->description ?: 'Описание пока не заполнено.' }}</p>
+
+                    <div class="tags" style="margin-top:10px;">
+                        <span class="chip">Оружия: {{ $line->weapons_count }}</span>
+                        <span class="chip">Общие навыки: {{ $line->line_skills_count }}</span>
+                    </div>
+
+                    <div class="tags" style="margin-top:12px;">
+                        <a class="btn" href="{{ route('weapon-lines.show', $line->slug) }}">Открыть ветку</a>
+                        <a class="btn" href="{{ route('admin.weapon-lines.edit', $line->id) }}">Редактировать</a>
+                    </div>
+                </article>
+            @empty
+                <p class="muted">Ветки ещё не созданы. Нажмите «Добавить новую ветку», чтобы начать.</p>
+            @endforelse
+        </div>
+
+        <div style="margin-top:18px;">
+            {{ $lines->links() }}
+        </div>
+    </section>
 @endsection
