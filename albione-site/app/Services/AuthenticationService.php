@@ -10,18 +10,15 @@ use Illuminate\Support\Facades\Schema;
 
 class AuthenticationService
 {
+    private ?bool $supportsUsername = null;
+
     public function login(string $login, string $password): ?User
     {
-        $supportsUsername = Schema::hasColumn('users', 'username');
+        $supportsUsername = $this->supportsUsername();
 
         $user = User::query()
-            ->where(function ($query) use ($login, $supportsUsername) {
-                $query->where('email', $login);
-
-                if ($supportsUsername) {
-                    $query->orWhere('username', $login);
-                }
-            })
+            ->where('email', $login)
+            ->when($supportsUsername, fn ($query) => $query->orWhere('username', $login))
             ->first();
 
         if (! $user || ! Hash::check($password, $user->password)) {
@@ -35,13 +32,13 @@ class AuthenticationService
 
     public function register(array $attributes): User
     {
-        $supportsUsername = Schema::hasColumn('users', 'username');
+        $supportsUsername = $this->supportsUsername();
 
         return DB::transaction(function () use ($attributes, $supportsUsername) {
             $payload = [
                 'name' => $attributes['name'],
                 'email' => $attributes['email'],
-                'password' => $attributes['password'],
+                'password' => Hash::make($attributes['password']),
             ];
 
             if ($supportsUsername) {
@@ -56,5 +53,10 @@ class AuthenticationService
 
             return $user;
         });
+    }
+
+    private function supportsUsername(): bool
+    {
+        return $this->supportsUsername ??= Schema::hasColumn('users', 'username');
     }
 }
