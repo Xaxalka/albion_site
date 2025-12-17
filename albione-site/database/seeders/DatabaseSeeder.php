@@ -21,39 +21,36 @@ class DatabaseSeeder extends Seeder
         $supportsUsername = Schema::hasColumn('users', 'username');
 
         // Create baseline users without overwriting manually managed roles
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-                'username' => $supportsUsername ? 'testuser' : null,
-                'is_admin' => true,
-            ]
-        );
+        $testUser = [
+            'name' => 'Test User',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'is_admin' => true,
+        ];
 
-        User::firstOrCreate(
-            ['email' => 'admin@example.com'],
-            [
-                'name' => 'Admin',
-                'password' => Hash::make('admin'),
-                'email_verified_at' => now(),
-                'username' => $supportsUsername ? 'admin' : null,
-                'is_admin' => true,
-                
-            ]
-        );
+        $adminUser = [
+            'name' => 'Admin',
+            'password' => Hash::make('admin'),
+            'email_verified_at' => now(),
+            'is_admin' => true,
+        ];
 
-        User::updateOrCreate(
-            ['email' => 'xaxalka@example.com'],
-            [
-                'name' => 'xaxalka',
-                'password' => Hash::make('asddsa123321'),
-                'email_verified_at' => now(),
-                'username' => $supportsUsername ? 'xaxalka' : null,
-                'is_admin' => true,
-            ]
-        );
+        $xaxalkaUser = [
+            'name' => 'xaxalka',
+            'password' => Hash::make('asddsa123321'),
+            'email_verified_at' => now(),
+            'is_admin' => true,
+        ];
+
+        if ($supportsUsername) {
+            $testUser['username'] = 'testuser';
+            $adminUser['username'] = 'admin';
+            $xaxalkaUser['username'] = 'xaxalka';
+        }
+
+        User::firstOrCreate(['email' => 'test@example.com'], $testUser);
+        User::firstOrCreate(['email' => 'admin@example.com'], $adminUser);
+        User::updateOrCreate(['email' => 'xaxalka@example.com'], $xaxalkaUser);
 
         $this->call([
             WeaponSeeder::class,
