@@ -13,7 +13,9 @@ class EnsureAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user()?->is_admin) {
+        $user = $request->user();
+
+        if (! $user || ! $user->isAdmin()) {
             return redirect()->route('wiki')->with('status', 'У вас нет прав для доступа к панели администратора.');
         }
 
