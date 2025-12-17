@@ -40,8 +40,12 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        $redirectRoute = auth()->user()?->isAdmin()
+            ? route('admin.dashboard')
+            : route('wiki');
+
         return redirect()
-            ->intended(route('wiki'))
+            ->intended($redirectRoute)
             ->with('status', 'Добро пожаловать!');
     }
 
