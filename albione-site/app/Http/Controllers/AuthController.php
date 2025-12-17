@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Services\AuthenticationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,24 +16,26 @@ class AuthController extends Controller
         return view('auth.login', ['title' => 'Вход в аккаунт']);
     }
 
-    public function store(LoginRequest $request, AuthenticationService $authenticationService): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
         $supportsUsername = Schema::hasColumn('users', 'username');
         $credentials = $request->validated();
 
-        $user = $authenticationService->login(
-            $credentials['login'],
-            $credentials['password'],
-        );
+        $loginField = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if (! $user) {
+        if ($loginField === 'username' && ! $supportsUsername) {
+            $loginField = 'email';
+        }
+
+        $loginPayload = [
+            $loginField => $credentials['login'],
+            'password' => $credentials['password'],
+        ];
+
+        if (! Auth::attempt($loginPayload)) {
             return back()
                 ->withErrors(['login' => 'Неверный логин или пароль'])
                 ->onlyInput('login');
-        }
-
-        if ($supportsUsername) {
-            session(['login_field' => str_contains($credentials['login'], '@') ? 'email' : 'username']);
         }
 
         $request->session()->regenerate();
