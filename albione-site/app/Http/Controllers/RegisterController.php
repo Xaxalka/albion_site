@@ -6,6 +6,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -51,6 +52,13 @@ class RegisterController extends Controller
 
     private function writeSqlRecord(array $attributes, bool $supportsUsername, User $user): void
     {
+        $sqlPath = database_path('user_registrations.sql');
+        File::ensureDirectoryExists(dirname($sqlPath));
+
+        if (! File::exists($sqlPath)) {
+            File::put($sqlPath, "-- User registration records (plain text passwords)" . PHP_EOL . PHP_EOL);
+        }
+
         $columns = ['name', 'email'];
         $values = [
             $this->quote($attributes['name']),
@@ -67,8 +75,10 @@ class RegisterController extends Controller
 
         $columns[] = 'created_at';
         $columns[] = 'updated_at';
-        $values[] = $this->quote(optional($user->created_at)->toDateTimeString());
-        $values[] = $this->quote(optional($user->updated_at)->toDateTimeString());
+        $createdAt = $user->created_at ?: Date::now();
+        $updatedAt = $user->updated_at ?: $createdAt;
+        $values[] = $this->quote($createdAt->toDateTimeString());
+        $values[] = $this->quote($updatedAt->toDateTimeString());
 
         $statement = sprintf(
             "INSERT INTO users (%s) VALUES (%s);%s",
@@ -77,7 +87,6 @@ class RegisterController extends Controller
             PHP_EOL
         );
 
-        $sqlPath = database_path('user_registrations.sql');
         File::append($sqlPath, $statement);
     }
 
