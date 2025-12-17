@@ -1,5 +1,7 @@
-@php($title = 'Edit Weapon')
 @extends('layouts.app')
+@php
+    $title = 'Edit Weapon';
+@endphp
 
 @section('content')
     <div class="mb-6">
@@ -50,10 +52,55 @@
             @endif
         </div>
         <div>
+            <label class="block text-sm font-medium text-slate-700">Icon URL (список/превью)</label>
+            <input name="icon" value="{{ old('icon', $weapon->icon) }}" class="mt-1 w-full rounded border-slate-300">
+            @error('icon')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            @if($weapon->icon)
+                <div class="mt-3">
+                    <div class="text-xs text-slate-600 mb-1">Preview</div>
+                    <img src="{{ $weapon->icon }}" alt="Icon preview {{ $weapon->name }}" class="max-h-24 rounded border border-slate-200">
+                </div>
+            @endif
+        </div>
+        <div>
             <label class="block text-sm font-medium text-slate-700">Author Notes</label>
             <textarea name="author_notes" rows="3" class="mt-1 w-full rounded border-slate-300">{{ old('author_notes', $weapon->author_notes) }}</textarea>
             @error('author_notes')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
+
+        @php
+            $latestMedia = optional($weapon->weaponSkill?->media)->sortByDesc('created_at')->first();
+            $iconUrl = null;
+
+            if ($latestMedia) {
+                $iconUrl = $latestMedia->disk === 'url'
+                    ? $latestMedia->path
+                    : \Illuminate\Support\Facades\URL::temporarySignedRoute('media.show', now()->addMinutes(30), ['media' => $latestMedia]);
+            }
+        @endphp
+        <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <div class="text-sm font-medium text-slate-700">Иконка E-скилла</div>
+                    <p class="text-xs text-slate-500">Отдельно от основного изображения. Используется в списках и деталке.</p>
+                </div>
+                <a href="{{ route('admin.weapon-skills.edit', $weapon->id) }}" class="text-sm text-indigo-700 hover:text-indigo-800">Редактировать E Skill</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-slate-300 bg-white overflow-hidden">
+                    @if($iconUrl)
+                        <img src="{{ $iconUrl }}" alt="Иконка {{ $weapon->weaponSkill?->name ?? $weapon->name }}" class="h-full w-full object-contain">
+                    @else
+                        <span class="text-xs text-slate-500 text-center px-2">Нет иконки</span>
+                    @endif
+                </div>
+                <div class="text-xs text-slate-600">
+                    <p>Загрузите иконку на странице E-скилла. Форматы: png/jpg/gif.</p>
+                    <p class="mt-1">Размер автоматически впишется без искажений.</p>
+                </div>
+            </div>
+        </div>
+
         <div>
             <label class="block text-sm font-medium text-slate-700">Description</label>
             <textarea name="description" rows="4" class="mt-1 w-full rounded border-slate-300">{{ old('description', $weapon->description) }}</textarea>

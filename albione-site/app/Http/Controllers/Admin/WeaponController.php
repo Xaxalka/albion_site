@@ -34,6 +34,7 @@ class WeaponController extends Controller
             'description' => ['nullable', 'string'],
             'author_notes' => ['nullable', 'string'],
             'image' => ['nullable', 'string', 'max:255'],
+            'icon' => ['nullable', 'string', 'max:255'],
         ]);
 
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);
@@ -45,7 +46,7 @@ class WeaponController extends Controller
 
     public function edit(int $id)
     {
-        $weapon = Weapon::findOrFail($id);
+        $weapon = Weapon::with('weaponSkill.media')->findOrFail($id);
         $weaponLines = WeaponLine::orderBy('name')->get();
 
         return view('admin.weapons.edit', compact('weapon', 'weaponLines'));
@@ -63,6 +64,7 @@ class WeaponController extends Controller
             'description' => ['nullable', 'string'],
             'author_notes' => ['nullable', 'string'],
             'image' => ['nullable', 'string', 'max:255'],
+            'icon' => ['nullable', 'string', 'max:255'],
         ]);
 
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);

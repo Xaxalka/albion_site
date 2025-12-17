@@ -16,6 +16,7 @@ class Weapon extends Model
         'description',
         'author_notes',
         'image',
+        'icon',
         'tier',
         'enchantment',
         'item_power',

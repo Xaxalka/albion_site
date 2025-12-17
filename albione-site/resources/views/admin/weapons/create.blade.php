@@ -50,6 +50,11 @@
             @endif
         </div>
         <div>
+            <label class="block text-sm font-medium text-slate-700">Icon URL (список/превью)</label>
+            <input name="icon" value="{{ old('icon') }}" placeholder="https://example.com/icon.png" class="mt-1 w-full rounded border-slate-300">
+            @error('icon')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+        </div>
+        <div>
             <label class="block text-sm font-medium text-slate-700">Author Notes</label>
             <textarea name="author_notes" rows="3" class="mt-1 w-full rounded border-slate-300">{{ old('author_notes') }}</textarea>
             @error('author_notes')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror

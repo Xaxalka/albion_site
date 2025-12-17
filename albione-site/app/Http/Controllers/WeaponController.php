@@ -10,7 +10,7 @@ class WeaponController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Weapon::with(['weaponLine', 'weaponSkill'])
+        $query = Weapon::with(['weaponLine', 'weaponSkill.media'])
             ->whereHas('weaponLine', fn ($q) => $q->whereIn('name', WeaponLine::ALLOWED_NAMES));
 
         if ($request->filled('weapon_line_id')) {
@@ -25,7 +25,8 @@ class WeaponController extends Controller
 
     public function show(string $slug)
     {
-        $weapon = Weapon::where('slug', $slug)
+        $weapon = Weapon::with('weaponSkill.media')
+            ->where('slug', $slug)
             ->whereHas('weaponLine', fn ($q) => $q->whereIn('name', WeaponLine::ALLOWED_NAMES))
             ->firstOrFail();
 

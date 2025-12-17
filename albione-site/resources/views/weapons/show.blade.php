@@ -1,11 +1,30 @@
-@php($title = $weapon->name . ' — оружие Albion')
 @extends('layouts.app')
+@php
+    $title = $weapon->name . ' — оружие Albion';
+@endphp
 
 @section('content')
 <div class="section-header">
     <div class="eyebrow">Карточка оружия</div>
     <h1>{{ $weapon->name }}</h1>
     <p>{{ $weapon->description }}</p>
+    @php
+        $latestMedia = optional($weapon->weaponSkill?->media)->sortByDesc('created_at')->first();
+        $iconUrl = null;
+
+        if ($latestMedia) {
+            $iconUrl = $latestMedia->disk === 'url'
+                ? $latestMedia->path
+                : \Illuminate\Support\Facades\URL::temporarySignedRoute('media.show', now()->addMinutes(30), ['media' => $latestMedia]);
+        } elseif ($weapon->icon) {
+            $iconUrl = $weapon->icon;
+        }
+    @endphp
+    @if($iconUrl)
+        <div style="margin-top:12px; width:88px; height:88px; border-radius:18px; border:1px solid var(--line); background: rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+            <img src="{{ $iconUrl }}" alt="Иконка {{ $weapon->weaponSkill?->name ?? $weapon->name }}" style="width:100%; height:100%; object-fit:contain;">
+        </div>
+    @endif
     @if($weapon->image)
         <div style="margin-top:12px;">
             <img src="{{ $weapon->image }}" alt="Изображение {{ $weapon->name }}" style="max-height:240px; border-radius:14px; border:1px solid var(--line); box-shadow:0 14px 30px var(--shadow);">
