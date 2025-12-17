@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Seeders\WeaponSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
@@ -27,7 +28,7 @@ class DatabaseSeeder extends Seeder
                 'password' => 'password',
                 'email_verified_at' => now(),
                 'username' => $supportsUsername ? 'testuser' : null,
-                'is_admin' => false,
+                'is_admin' => true,
             ]
         );
 
