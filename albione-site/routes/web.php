@@ -37,6 +37,8 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', fn () => redirect()->route('admin.weapon-lines.index'))->name('dashboard');
+
     Route::get('/weapon-lines', [AdminWeaponLineController::class, 'index'])->name('weapon-lines.index');
     Route::get('/weapon-lines/create', [AdminWeaponLineController::class, 'create'])->name('weapon-lines.create');
     Route::post('/weapon-lines', [AdminWeaponLineController::class, 'store'])->name('weapon-lines.store');
