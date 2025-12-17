@@ -174,18 +174,20 @@
             <a href="{{ route('wiki') }}">Главная</a>
             <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
             <a href="{{ route('weapons.index') }}">Оружие</a>
-            @auth
-                @if(Auth::user()?->is_admin)
-                    <a href="{{ route('admin.weapons.index') }}">Админка</a>
+            @if($currentUser)
+                @if($isAdmin)
+                    <a href="{{ route('admin.dashboard') }}">Админ-панель</a>
+                    <a href="{{ route('admin.weapon-lines.index') }}">Ветки (админ)</a>
+                    <a href="{{ route('admin.weapons.index') }}">Оружие (админ)</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit">Выйти ({{ Auth::user()->name }})</button>
+                    <button type="submit">Выйти ({{ $currentUser->name }})</button>
                 </form>
             @else
                 <a href="{{ route('register') }}">Регистрация</a>
                 <a href="{{ route('login') }}">Войти</a>
-            @endauth
+            @endif
         </nav>
     </header>
 

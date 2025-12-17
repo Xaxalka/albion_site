@@ -13,8 +13,9 @@ class WeaponLineController extends Controller
     public function index()
     {
         $lines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)
+            ->withCount(['weapons', 'lineSkills'])
             ->orderBy('name')
-            ->paginate(10);
+            ->paginate(9);
 
         return view('admin.weapon-lines.index', compact('lines'));
     }
