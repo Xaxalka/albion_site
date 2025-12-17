@@ -14,21 +14,30 @@ class AuthenticationService
     {
         $supportsUsername = Schema::hasColumn('users', 'username');
 
-        $user = User::query()
-            ->where(function ($query) use ($login, $supportsUsername) {
-                $query->where('email', $login);
+        $loginField = filter_var($login, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : ($supportsUsername ? 'username' : 'email');
 
-                if ($supportsUsername) {
-                    $query->orWhere('username', $login);
-                }
-            })
-            ->first();
+        $credentials = [
+            $loginField => $login,
+            'password' => $password,
+        ];
 
-        if (! $user || ! Hash::check($password, $user->password)) {
+        $loggedIn = Auth::attempt($credentials);
+
+        if (! $loggedIn && $supportsUsername && $loginField === 'username') {
+            $loggedIn = Auth::attempt([
+                'email' => $login,
+                'password' => $password,
+            ]);
+        }
+
+        if (! $loggedIn) {
             return null;
         }
 
-        Auth::login($user);
+        /** @var User $user */
+        $user = Auth::user();
 
         return $user;
     }

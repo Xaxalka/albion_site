@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
-                'password' => 'password',
+                'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'username' => $supportsUsername ? 'testuser' : null,
                 'is_admin' => true,
@@ -36,10 +36,11 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
-                'password' => 'admin',
+                'password' => Hash::make('admin'),
                 'email_verified_at' => now(),
                 'username' => $supportsUsername ? 'admin' : null,
                 'is_admin' => true,
+                
             ]
         );
 
@@ -47,7 +48,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'xaxalka@example.com'],
             [
                 'name' => 'xaxalka',
-                'password' => 'asddsa123321',
+                'password' => Hash::make('asddsa123321'),
                 'email_verified_at' => now(),
                 'username' => $supportsUsername ? 'xaxalka' : null,
                 'is_admin' => true,
