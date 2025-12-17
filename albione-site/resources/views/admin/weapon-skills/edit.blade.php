@@ -7,7 +7,7 @@
         <p class="text-sm text-slate-600">Unique per-weapon ability.</p>
     </div>
 
-    <form action="{{ route('admin.weapon-skills.update', $weapon->id) }}" method="POST" class="space-y-4 rounded-lg border border-slate-200 bg-white p-6">
+    <form action="{{ route('admin.weapon-skills.update', $weapon->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4 rounded-lg border border-slate-200 bg-white p-6">
         @csrf
         @method('PUT')
         <div>
@@ -24,6 +24,18 @@
             <label class="block text-sm font-medium text-slate-700">Author Notes</label>
             <textarea name="author_notes" rows="3" class="mt-1 w-full rounded border-slate-300">{{ old('author_notes', $skill->author_notes) }}</textarea>
             @error('author_notes')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700">Upload media (png/jpg/gif)</label>
+                <input type="file" name="media_upload" accept=".png,.jpg,.jpeg,.gif" class="mt-1 w-full rounded border-slate-300 bg-white">
+                @error('media_upload')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700">YouTube или внешний URL</label>
+                <input name="media_url" value="{{ old('media_url') }}" placeholder="https://youtu.be/..." class="mt-1 w-full rounded border-slate-300">
+                @error('media_url')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            </div>
         </div>
         <div class="flex items-center gap-3">
             <button class="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" type="submit">Save</button>

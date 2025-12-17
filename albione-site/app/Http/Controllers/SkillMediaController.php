@@ -14,6 +14,10 @@ class SkillMediaController extends Controller
             abort(403, 'Signed URL required for private media');
         }
 
+        if ($media->disk === 'url') {
+            return redirect()->away($media->path);
+        }
+
         $disk = $media->disk ?? 'local';
 
         if (! Storage::disk($disk)->exists($media->path)) {
