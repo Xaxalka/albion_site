@@ -42,6 +42,17 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        User::updateOrCreate(
+            ['email' => 'xaxalka@example.com'],
+            [
+                'name' => 'xaxalka',
+                'password' => 'asddsa123321',
+                'email_verified_at' => now(),
+                'username' => $supportsUsername ? 'xaxalka' : null,
+                'is_admin' => true,
+            ]
+        );
+
         $this->call([
             WeaponSeeder::class,
         ]);

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Services\AuthenticationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,40 +17,24 @@ class AuthController extends Controller
         return view('auth.login', ['title' => 'Вход в аккаунт']);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(LoginRequest $request, AuthenticationService $authenticationService): RedirectResponse
     {
-        $data = $request->validate([
-            'login' => ['required', 'string'],
-            'password' => ['required', 'string'],
-        ]);
+        $supportsUsername = Schema::hasColumn('users', 'username');
+        $credentials = $request->validated();
 
-        $login = $data['login'];
-        $password = $data['password'];
+        $user = $authenticationService->login(
+            $credentials['login'],
+            $credentials['password'],
+        );
 
-        $credentialOptions = [
-            ['email' => $login, 'password' => $password],
-        ];
-
-        if (Schema::hasColumn('users', 'username')) {
-            $credentialOptions[] = ['username' => $login, 'password' => $password];
-        }
-
-        $credentialOptions[] = ['name' => $login, 'password' => $password];
-
-        $attempted = false;
-
-        foreach ($credentialOptions as $credentials) {
-            $attempted = Auth::attempt($credentials);
-
-            if ($attempted) {
-                break;
-            }
-        }
-
-        if (! $attempted) {
+        if (! $user) {
             return back()
                 ->withErrors(['login' => 'Неверный логин или пароль'])
                 ->onlyInput('login');
+        }
+
+        if ($supportsUsername) {
+            session(['login_field' => str_contains($credentials['login'], '@') ? 'email' : 'username']);
         }
 
         $request->session()->regenerate();
