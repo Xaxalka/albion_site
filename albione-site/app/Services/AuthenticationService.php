@@ -21,11 +21,21 @@ class AuthenticationService
             ->when($supportsUsername, fn ($query) => $query->orWhere('username', $login))
             ->first();
 
-        if (! $user || ! Hash::check($password, $user->password)) {
+        $loggedIn = Auth::attempt($credentials);
+
+        if (! $loggedIn && $supportsUsername && $loginField === 'username') {
+            $loggedIn = Auth::attempt([
+                'email' => $login,
+                'password' => $password,
+            ]);
+        }
+
+        if (! $loggedIn) {
             return null;
         }
 
-        Auth::login($user);
+        /** @var User $user */
+        $user = Auth::user();
 
         return $user;
     }
