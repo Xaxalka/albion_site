@@ -161,7 +161,19 @@
         .table th { color: var(--gold-strong); letter-spacing: 0.03em; font-weight: 700; }
         form { display: grid; gap: 10px; }
         label { font-weight: 600; color: var(--text); font-size: 14px; }
-        select, input, textarea { width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--text); }
+        select, input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: linear-gradient(140deg, rgba(242,200,124,0.06), rgba(16,23,35,0.9));
+            color: var(--text);
+        }
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gold-strong);
+            box-shadow: 0 8px 20px rgba(242,200,124,0.16);
+        }
         button, .btn { display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(140deg, rgba(242,200,124,0.12), rgba(16,23,35,0.9)); color: #fff; font-weight: 700; letter-spacing: 0.02em; cursor: pointer; text-decoration: none; transition: 160ms ease; }
         button:hover, .btn:hover { border-color: var(--gold-strong); box-shadow: 0 10px 24px rgba(242,200,124,0.2); transform: translateY(-1px); }
         .alert { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: rgba(242,200,124,0.08); color: #fff; }
