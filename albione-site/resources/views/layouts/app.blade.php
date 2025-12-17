@@ -170,6 +170,10 @@
 <div class="page-shell">
     <header class="site-header">
         <div class="crest">Albion Codex</div>
+        @php
+            $currentUser = $currentUser ?? auth()->user();
+            $isAdmin = $isAdmin ?? (bool) $currentUser?->isAdmin();
+        @endphp
         <nav class="nav-links" aria-label="Главная навигация">
             <a href="{{ route('wiki') }}">Главная</a>
             <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
