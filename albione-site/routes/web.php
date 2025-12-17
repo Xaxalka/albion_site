@@ -13,6 +13,12 @@ use App\Http\Controllers\WeaponLineController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    $user = auth()->user();
+
+    if ($user?->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
     return app(WikiController::class)->index();
 })->middleware('auth');
 
