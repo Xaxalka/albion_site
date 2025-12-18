@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM php:8.2-apache-bullseye AS base
+FROM php:8.4-apache-bullseye AS base
 
 ARG UID=1000
 ARG GID=1000
@@ -29,13 +29,16 @@ RUN groupmod -o -g ${GID} www-data && usermod -o -u ${UID} -g www-data www-data
 FROM base AS vendor
 
 COPY albione-site/composer.json albione-site/composer.lock ./
+ARG GITHUB_TOKEN
 ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress --no-scripts
+RUN --mount=type=cache,target=/root/.composer/cache \
+    if [ -n "${GITHUB_TOKEN:-}" ]; then composer config -g github-oauth.github.com "${GITHUB_TOKEN}"; fi \
+    && composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress --no-scripts
 
 FROM node:20-bullseye AS frontend
 WORKDIR /app
 COPY albione-site/package.json albione-site/package-lock.json albione-site/vite.config.js ./
-RUN npm ci --no-audit --no-fund
+RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 COPY albione-site/public ./public
 COPY albione-site/resources ./resources
 RUN npm run build
