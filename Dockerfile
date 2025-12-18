@@ -30,7 +30,7 @@ FROM base AS vendor
 
 COPY albione-site/composer.json albione-site/composer.lock ./
 ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress --no-scripts
 
 FROM node:20-bullseye AS frontend
 WORKDIR /app
@@ -56,6 +56,8 @@ COPY --from=frontend /app/public/build ./public/build
 RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwx storage bootstrap/cache
+
+RUN php artisan package:discover --ansi
 
 RUN a2enmod rewrite headers
 
