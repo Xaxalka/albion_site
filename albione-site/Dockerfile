@@ -1,4 +1,7 @@
 # syntax=docker/dockerfile:1.4
+#
+# This Dockerfile is intended to be built with the repository root as the Docker build context.
+# If you set Render's rootDir/build context to `albione-site`, use the root `Dockerfile` instead.
 
 FROM php:8.2-apache-bullseye AS base
 

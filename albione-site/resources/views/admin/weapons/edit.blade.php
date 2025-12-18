@@ -33,13 +33,6 @@
                 @error('slug')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
         </div>
-        <div class="grid md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-slate-700">Tier</label>
-                <input name="tier" value="{{ old('tier', $weapon->tier) }}" class="mt-1 w-full rounded border-slate-300" required>
-                @error('tier')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-            </div>
-        </div>
         <div>
             <label class="block text-sm font-medium text-slate-700">Image URL</label>
             <input name="image" value="{{ old('image', $weapon->image) }}" class="mt-1 w-full rounded border-slate-300">
@@ -68,9 +61,11 @@
             @error('author_notes')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
 
-        @php
-            $latestMedia = optional($weapon->weaponSkill?->media)->sortByDesc('created_at')->first();
-            $iconUrl = null;
+	        @php
+	            $latestMedia = ($weapon->weaponSkill?->media ?? collect())
+	                ->sortByDesc('created_at')
+	                ->first();
+	            $iconUrl = null;
 
             if ($latestMedia) {
                 $iconUrl = $latestMedia->disk === 'url'

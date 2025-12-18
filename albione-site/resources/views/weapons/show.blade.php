@@ -41,11 +41,6 @@
     <div class="subtle-title">Характеристики</div>
     <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px;">
         <div class="card">
-            <div class="meta">Item Power</div>
-            <h2 style="margin-top:6px;">{{ $weapon->item_power }}</h2>
-            <p class="muted">Базовая мощь предмета, меняется от зачарования.</p>
-        </div>
-        <div class="card">
             <div class="meta">Зачарование</div>
             <h2 style="margin-top:6px;">+<span x-text="selectedEnchant"></span></h2>
             <p class="muted">Выберите уровень, чтобы отметить редкость.</p>

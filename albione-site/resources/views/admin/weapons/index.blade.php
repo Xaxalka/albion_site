@@ -17,7 +17,6 @@
             <thead class="bg-slate-50">
                 <tr class="text-left text-sm font-semibold text-slate-700">
                     <th class="px-4 py-3">Name</th>
-                    <th class="px-4 py-3">Tier</th>
                     <th class="px-4 py-3">Line</th>
                     <th class="px-4 py-3">Updated</th>
                     <th class="px-4 py-3"></th>
@@ -29,7 +28,6 @@
                         <td class="px-4 py-3 font-semibold text-indigo-700">
                             <a href="{{ route('weapons.show', $weapon->slug) }}" class="hover:underline">{{ $weapon->name }}</a>
                         </td>
-                        <td class="px-4 py-3">{{ $weapon->tier }}</td>
                         <td class="px-4 py-3">{{ $weapon->weaponLine?->name }}</td>
                         <td class="px-4 py-3">{{ $weapon->updated_at->format('Y-m-d') }}</td>
                         <td class="px-4 py-3 text-right">
@@ -38,7 +36,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-4 text-center text-slate-600">No weapons yet.</td>
+                        <td colspan="4" class="px-4 py-4 text-center text-slate-600">No weapons yet.</td>
                     </tr>
                 @endforelse
             </tbody>

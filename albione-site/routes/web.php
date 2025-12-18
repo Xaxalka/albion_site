@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\LineSkillController as AdminLineSkillController;
+use App\Http\Controllers\Admin\ArmorController as AdminArmorController;
 use App\Http\Controllers\Admin\WeaponController as AdminWeaponController;
 use App\Http\Controllers\Admin\WeaponLineController as AdminWeaponLineController;
 use App\Http\Controllers\Admin\WeaponSkillController as AdminWeaponSkillController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\SkillMediaController;
 use App\Http\Controllers\WikiController;
 use App\Http\Controllers\WeaponController;
 use App\Http\Controllers\WeaponLineController;
+use App\Http\Controllers\ArmorController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/weapon-lines/{slug}', [WeaponLineController::class, 'show'])->name('weapon-lines.show');
     Route::get('/weapons', [WeaponController::class, 'index'])->name('weapons.index');
     Route::get('/weapons/{slug}', [WeaponController::class, 'show'])->name('weapons.show');
+    Route::get('/armor', [ArmorController::class, 'index'])->name('armor.index');
+    Route::get('/armor/{slug}', [ArmorController::class, 'show'])->name('armor.show');
     Route::get('/media/{media}', [SkillMediaController::class, 'show'])->middleware('signed')->name('media.show');
 });
 
@@ -64,4 +68,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/weapons/{weaponId}/skill', [AdminWeaponSkillController::class, 'edit'])->name('weapon-skills.edit');
     Route::put('/weapons/{weaponId}/skill', [AdminWeaponSkillController::class, 'update'])->name('weapon-skills.update');
+
+    Route::get('/armor', [AdminArmorController::class, 'index'])->name('armor.index');
+    Route::get('/armor/create', [AdminArmorController::class, 'create'])->name('armor.create');
+    Route::post('/armor', [AdminArmorController::class, 'store'])->name('armor.store');
+    Route::get('/armor/{id}/edit', [AdminArmorController::class, 'edit'])->name('armor.edit');
+    Route::put('/armor/{id}', [AdminArmorController::class, 'update'])->name('armor.update');
 });

@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: albione-site
+    env: docker
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    autoDeploy: true
+    healthCheckPath: /

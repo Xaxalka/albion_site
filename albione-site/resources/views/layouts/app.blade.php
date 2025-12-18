@@ -198,10 +198,12 @@
             <a href="{{ route('wiki') }}">Главная</a>
             <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
             <a href="{{ route('weapons.index') }}">Оружие</a>
+            <a href="{{ route('armor.index') }}">Броня</a>
             @if($currentUser)
                 @if($isAdmin)
                     <a href="{{ route('admin.weapon-lines.index') }}">Ветки (админ)</a>
                     <a href="{{ route('admin.weapons.index') }}">Оружие (админ)</a>
+                    <a href="{{ route('admin.armor.index') }}">Броня (админ)</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

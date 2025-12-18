@@ -26,7 +26,6 @@ class WeaponSeeder extends Seeder
                 'weapons' => [
                     [
                         'name' => 'Broadsword',
-                        'tier' => 'T4',
                         'description' => 'Reliable sword for frontline skirmishes.',
                         'author_notes' => 'Starter weapon; good baseline.',
                         'image' => 'https://via.placeholder.com/200?text=Broadsword',
@@ -34,7 +33,6 @@ class WeaponSeeder extends Seeder
                     ],
                     [
                         'name' => 'Claymore',
-                        'tier' => 'T5',
                         'description' => 'Heavy two-handed sword with burst initiation.',
                         'author_notes' => 'Rewards aggressive play.',
                         'image' => 'https://via.placeholder.com/200?text=Claymore',
@@ -53,7 +51,6 @@ class WeaponSeeder extends Seeder
                 'weapons' => [
                     [
                         'name' => 'Warbow',
-                        'tier' => 'T4',
                         'description' => 'High burst from range with long stun shot.',
                         'author_notes' => 'Great for picks.',
                         'image' => 'https://via.placeholder.com/200?text=Warbow',
@@ -72,7 +69,6 @@ class WeaponSeeder extends Seeder
                 'weapons' => [
                     [
                         'name' => 'Fire Staff',
-                        'tier' => 'T5',
                         'description' => 'Core fire weapon with strong AoE zoning.',
                         'author_notes' => 'Staple for group fights.',
                         'image' => 'https://via.placeholder.com/200?text=Fire+Staff',
@@ -109,7 +105,6 @@ class WeaponSeeder extends Seeder
                         'weapon_line_id' => $line->id,
                         'name' => $weaponData['name'],
                         'slug' => Str::slug($weaponData['name']),
-                        'tier' => $weaponData['tier'],
                         'description' => $weaponData['description'] ?? null,
                         'author_notes' => $weaponData['author_notes'] ?? null,
                         'image' => $weaponData['image'] ?? null,
