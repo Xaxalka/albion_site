@@ -11,7 +11,7 @@
 <section class="panel">
     <div class="card-grid">
         <article class="card">
-            <div class="subtle-title">Линии оружия</div>
+            <div class="subtle-title">Ветки оружий</div>
             <h2>Общие ветки</h2>
             <p class="muted" style="margin-top:6px;">Список веток с общими умениями и быстрыми подсказками.</p>
             <div class="tags" style="margin-top:10px;">

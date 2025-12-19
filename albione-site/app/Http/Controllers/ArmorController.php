@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ArmorItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ArmorController extends Controller
 {
@@ -15,39 +16,48 @@ class ArmorController extends Controller
         $material = in_array($material, ArmorItem::MATERIALS, true) ? $material : null;
         $slot = in_array($slot, ArmorItem::SLOTS, true) ? $slot : null;
 
-        $query = ArmorItem::query();
+        $materialKey = $material ?: 'all';
+        $slotKey = $slot ?: 'all';
+        $cacheKey = "armor.index:material={$materialKey}:slot={$slotKey}";
 
-        if ($material) {
-            $query->where('material', $material);
-        }
+        $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($material, $slot) {
+            $query = ArmorItem::query();
 
-        if ($slot) {
-            $query->where('slot', $slot);
-        }
+            if ($material) {
+                $query->where('material', $material);
+            }
 
-        $items = $query
-            ->orderByRaw("CASE material WHEN 'cloth' THEN 1 WHEN 'leather' THEN 2 WHEN 'plate' THEN 3 ELSE 99 END")
-            ->orderByRaw("CASE slot WHEN 'chest' THEN 1 WHEN 'head' THEN 2 WHEN 'feet' THEN 3 ELSE 99 END")
-            ->orderBy('name')
-            ->get();
+            if ($slot) {
+                $query->where('slot', $slot);
+            }
 
-        $materialsToShow = $material ? [$material] : ArmorItem::MATERIALS;
-        $slotsToShow = $slot ? [$slot] : ArmorItem::SLOTS;
-        $itemsByMaterialSlot = $items->groupBy(['material', 'slot']);
+            $items = $query
+                ->orderByRaw("CASE material WHEN 'cloth' THEN 1 WHEN 'leather' THEN 2 WHEN 'plate' THEN 3 ELSE 99 END")
+                ->orderByRaw("CASE slot WHEN 'chest' THEN 1 WHEN 'head' THEN 2 WHEN 'feet' THEN 3 ELSE 99 END")
+                ->orderBy('name')
+                ->get();
 
-        return view('armor.index', [
-            'items' => $items,
-            'itemsByMaterialSlot' => $itemsByMaterialSlot,
-            'materialsToShow' => $materialsToShow,
-            'slotsToShow' => $slotsToShow,
-            'selectedMaterial' => $material,
-            'selectedSlot' => $slot,
-        ]);
+            $materialsToShow = $material ? [$material] : ArmorItem::MATERIALS;
+            $slotsToShow = $slot ? [$slot] : ArmorItem::SLOTS;
+
+            return [
+                'items' => $items,
+                'itemsByMaterialSlot' => $items->groupBy(['material', 'slot']),
+                'materialsToShow' => $materialsToShow,
+                'slotsToShow' => $slotsToShow,
+                'selectedMaterial' => $material,
+                'selectedSlot' => $slot,
+            ];
+        });
+
+        return view('armor.index', $data);
     }
 
     public function show(string $slug)
     {
-        $item = ArmorItem::where('slug', $slug)->firstOrFail();
+        $item = Cache::remember("armor.show:{$slug}", now()->addMinutes(10), function () use ($slug) {
+            return ArmorItem::where('slug', $slug)->firstOrFail();
+        });
 
         return view('armor.show', compact('item'));
     }

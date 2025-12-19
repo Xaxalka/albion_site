@@ -376,7 +376,7 @@
         </div>
 
         <nav class="cta-bar" aria-label="Быстрый переход по разделам">
-            <a class="cta-link" href="{{ route('weapon-lines.index') }}">Линии оружия <span>Ветки и умения</span></a>
+            <a class="cta-link" href="{{ route('weapon-lines.index') }}">Ветки оружий <span>Ветки и умения</span></a>
             <a class="cta-link" href="{{ route('weapons.index') }}">Оружие <span>Каталог и фильтры</span></a>
             <a class="cta-link" href="{{ route('wiki') }}#builds">Билды <span>Сборки по ролям</span></a>
             @if(Auth::user()?->is_admin)

@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -18,7 +20,7 @@ class AuthController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        $supportsUsername = Schema::hasColumn('users', 'username');
+        $supportsUsername = User::supportsUsername();
         $credentials = $request->validated();
 
         $loginField = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -33,12 +35,24 @@ class AuthController extends Controller
         ];
 
         if (! Auth::attempt($loginPayload)) {
+            Log::channel('auth')->warning('Login failed.', [
+                'login' => $credentials['login'],
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return back()
                 ->withErrors(['login' => 'Неверный логин или пароль'])
                 ->onlyInput('login');
         }
 
         $request->session()->regenerate();
+
+        Log::channel('auth')->info('Login succeeded.', [
+            'user_id' => auth()->id(),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         $redirectRoute = auth()->user()?->isAdmin()
             ? route('admin.dashboard')
@@ -51,6 +65,12 @@ class AuthController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        Log::channel('auth')->info('Logout succeeded.', [
+            'user_id' => auth()->id(),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         Auth::logout();
 
         $request->session()->invalidate();

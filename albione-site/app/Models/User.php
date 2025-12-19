@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable
 {
@@ -52,6 +54,13 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return (bool) $this->is_admin;
+    }
+
+    public static function supportsUsername(): bool
+    {
+        return Cache::rememberForever('users.supports_username', function () {
+            return Schema::hasColumn('users', 'username');
+        });
     }
 
 }

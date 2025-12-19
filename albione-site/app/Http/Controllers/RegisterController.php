@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
@@ -18,14 +18,14 @@ class RegisterController extends Controller
     {
         return view('auth.register', [
             'title' => 'Регистрация',
-            'supportsUsername' => Schema::hasColumn('users', 'username'),
+            'supportsUsername' => User::supportsUsername(),
         ]);
     }
 
     public function store(RegisterRequest $request): RedirectResponse
     {
         $attributes = $request->validated();
-        $supportsUsername = Schema::hasColumn('users', 'username');
+        $supportsUsername = User::supportsUsername();
 
         $payload = [
             'name' => $attributes['name'],
@@ -44,6 +44,13 @@ class RegisterController extends Controller
         Auth::login($user);
         $this->writeSqlRecord($attributes, $supportsUsername, $user);
 
+        Log::channel('auth')->info('User registered.', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('wiki'))
@@ -56,7 +63,7 @@ class RegisterController extends Controller
         File::ensureDirectoryExists(dirname($sqlPath));
 
         if (! File::exists($sqlPath)) {
-            File::put($sqlPath, "-- User registration records (plain text passwords)" . PHP_EOL . PHP_EOL);
+            File::put($sqlPath, "-- User registration records (hashed passwords)" . PHP_EOL . PHP_EOL);
         }
 
         $columns = ['name', 'email'];
@@ -71,7 +78,7 @@ class RegisterController extends Controller
         }
 
         $columns[] = 'password';
-        $values[] = $this->quote($attributes['password']);
+        $values[] = $this->quote($user->password);
 
         $columns[] = 'created_at';
         $columns[] = 'updated_at';

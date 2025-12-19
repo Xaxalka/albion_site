@@ -1,34 +1,12 @@
-@php($title = 'Линии оружия')
+@php($title = 'Ветки оружий')
 @extends('layouts.app')
 
 @section('content')
 <div class="section-header">
     <div class="eyebrow">Арсенал</div>
-    <h1>Линии оружия</h1>
+    <h1>Ветки оружий</h1>
     <p>Albion-ветки с общими умениями Q/W и пассивками. Атмосфера тёмного кодекса перенесена на весь сайт.</p>
 </div>
-
-<section class="panel">
-    <div class="subtle-title">Быстрый обзор</div>
-    <p class="muted">Под сетками добавлены подсказки по основным веткам, чтобы проще ориентироваться между вкладками.</p>
-    <div class="card-grid" style="margin-top:16px;">
-        <div class="card">
-            <div class="subtle-title">Вкладка воина</div>
-            <h3>Арбалеты, Молоты, Топоры</h3>
-            <p class="muted">Боевые перчатки, Булавы, Мечи.</p>
-        </div>
-        <div class="card">
-            <div class="subtle-title">Вкладка охотников</div>
-            <h3>Луки, Кинжалы, Копья</h3>
-            <p class="muted">Шесты, Shapeshifts, Друиды.</p>
-        </div>
-        <div class="card">
-            <div class="subtle-title">Вкладка магов</div>
-            <h3>Огненные, Священные, Мистические</h3>
-            <p class="muted">Морозные посохи, Проклятые посохи.</p>
-        </div>
-    </div>
-</section>
 
 <section class="card-grid">
     @foreach($lines as $line)

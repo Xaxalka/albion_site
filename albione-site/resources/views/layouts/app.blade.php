@@ -200,7 +200,7 @@
                 <a class="nav-links__admin" href="{{ route('admin.dashboard') }}">Админ-панель</a>
             @endif
             <a href="{{ route('wiki') }}">Главная</a>
-            <a href="{{ route('weapon-lines.index') }}">Линии оружия</a>
+            <a href="{{ route('weapon-lines.index') }}">Ветки оружий</a>
             <a href="{{ route('weapons.index') }}">Оружие</a>
             <a href="{{ route('armor.index') }}">Броня</a>
             @if($currentUser)
