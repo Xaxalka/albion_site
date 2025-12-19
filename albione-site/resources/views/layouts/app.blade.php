@@ -34,7 +34,7 @@
         .page-shell {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 28px 20px 64px;
+            padding: 0 20px 64px;
             position: relative;
         }
         .page-shell::before {
@@ -52,24 +52,28 @@
             align-items: center;
             justify-content: space-between;
             gap: 14px;
-            padding: 14px 16px;
+            padding: 24px 16px 14px;
             border: 1px solid var(--line);
-            border-radius: 18px;
+            border-radius: 0 0 18px 18px;
             background: rgba(13,19,31,0.78);
             box-shadow: 0 10px 30px var(--shadow);
             position: sticky;
-            top: 14px;
+            top: 0;
             z-index: 20;
             backdrop-filter: blur(12px);
+            margin: 0 -20px;
+            width: calc(100% + 40px);
         }
         .crest {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            padding: 8px 12px;
+            padding: 12px 14px 10px;
             border: 1px solid var(--line);
-            border-radius: 999px;
+            border-radius: 14px;
             background: rgba(13,19,31,0.7);
+            text-align: center;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             font-weight: 700;
