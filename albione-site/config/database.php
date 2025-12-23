@@ -16,8 +16,8 @@ return [
     |
     */
 
-    // Default to PostgreSQL to avoid silently falling back to SQLite when env var is missing
-    'default' => env('DB_CONNECTION', 'pgsql'),
+    // Default to MySQL to avoid silently falling back to SQLite when env var is missing
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -47,10 +47,10 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
+            'host' => env('DB_HOST', ''),
+            'port' => env('DB_PORT', ''),
+            'database' => env('DB_DATABASE', ''),
+            'username' => env('DB_USERNAME', ''),
             'password' => env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
