@@ -186,6 +186,9 @@
             .site-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
+    @if(request()->routeIs('admin.*'))
+        <link rel="stylesheet" href="{{ asset('css/admin-tables.css') }}">
+    @endif
 </head>
 <body>
 <div class="page-shell">

@@ -1,44 +1,86 @@
-@php($title = 'Панель веток')
+@php($title = 'Управление ветками')
 @extends('layouts.app')
 
 @section('content')
-    <div class="section-header">
-        <div class="eyebrow">Администрирование</div>
-        <h1>Панель управления ветками</h1>
-        <p>Только администраторы могут изменять ветки оружия, их слаг и описание. Отсюда удобно перейти к редактированию нужной ветки или открыть её на сайте.</p>
-        <div class="tags" style="margin-top:12px;">
-            <a class="btn" href="{{ route('admin.weapon-lines.create') }}">Добавить новую ветку</a>
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Управление ветками оружия</h1>
+            <p class="text-sm text-slate-600">Создавайте, редактируйте и управляйте ветками оружия, добавляйте общие навыки.</p>
         </div>
+        <a href="{{ route('admin.weapon-lines.create') }}" class="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+            + Добавить ветку
+        </a>
     </div>
 
-    <section class="panel">
-        <div class="subtle-title">Активные ветки</div>
-        <p class="muted" style="margin-top:6px;">Ниже список всех веток, доступных для редактирования администраторам. Дата обновления, количество оружия и общих навыков помогают быстро найти нужную линию.</p>
+    <form method="GET" class="admin-search-form" action="{{ route('admin.weapon-lines.index') }}">
+        <input name="q" value="{{ request('q') }}" placeholder="Поиск по названию или slug" class="admin-search-input" />
+        <button type="submit" class="admin-search-button">Найти</button>
+        @if(request('q'))
+            <a href="{{ route('admin.weapon-lines.index') }}" class="admin-clear-link">Сбросить</a>
+        @endif
+    </form>
 
-        <div class="card-grid" style="margin-top:16px;">
-            @forelse($lines as $line)
-                <article class="card">
-                    <div class="meta">{{ $line->slug }} · обновлено {{ $line->updated_at->format('d.m.Y') }}</div>
-                    <h3 style="margin-top:8px;">{{ $line->name }}</h3>
-                    <p class="muted" style="margin-top:8px;">{{ $line->description ?: 'Описание пока не заполнено.' }}</p>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <colgroup>
+                <col class="admin-colgroup-col-30">
+                <col class="admin-colgroup-col-20">
+                <col class="admin-colgroup-col-12">
+                <col class="admin-colgroup-col-12">
+                <col class="admin-colgroup-col-12">
+                <col class="admin-colgroup-col-14">
+            </colgroup>
+            <thead class="admin-thead">
+                <tr class="admin-th-row">
+                    <th class="admin-th">Название</th>
+                    <th class="admin-th">Slug</th>
+                    <th class="admin-th" style="text-align: center;">Оружие</th>
+                    <th class="admin-th" style="text-align: center;">Навыки</th>
+                    <th class="admin-th">Обновлено</th>
+                    <th class="admin-th" style="text-align: right;">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($lines as $line)
+                    <tr class="admin-tr">
+                        <td class="admin-td-ellipsis" style="font-weight: 600;">
+                            <a href="{{ route('weapon-lines.show', $line->slug) }}" class="admin-link">{{ $line->name }}</a>
+                        </td>
+                        <td class="admin-td-ellipsis">{{ $line->slug }}</td>
+                        <td class="admin-td" style="text-align: center;">
+                            <span class="admin-badge-blue">{{ $line->weapons_count ?? 0 }}</span>
+                        </td>
+                        <td class="admin-td" style="text-align: center;">
+                            <span class="admin-badge-green">{{ $line->line_skills_count ?? 0 }}</span>
+                        </td>
+                        <td class="admin-td" style="color: #6b7280;">{{ $line->updated_at->format('d.m.Y') }}</td>
+                        <td class="admin-td" style="text-align: right;">
+                            <div class="admin-actions">
+                                <a href="{{ route('admin.weapon-lines.edit', $line->id) }}" class="admin-action-link">Редактировать</a>
+                                <span class="admin-muted">·</span>
+                                <a href="{{ route('weapon-lines.show', $line->slug) }}" class="admin-muted">Просмотр</a>
+                                <span class="admin-muted">·</span>
+                                <form method="POST" action="{{ route('admin.weapon-lines.destroy', $line->id) }}" style="display:inline;" onsubmit="return confirm('Вы уверены?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="admin-danger-btn">Удалить</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="admin-td" style="text-align: center; color: #4b5563; padding: 32px 32px;">
+                            <p style="margin-bottom: 8px;">Ветки ещё не созданы.</p>
+                            <a href="{{ route('admin.weapon-lines.create') }}" class="admin-action-link">Создать первую ветку</a>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-                    <div class="tags" style="margin-top:10px;">
-                        <span class="chip">Оружия: {{ $line->weapons_count }}</span>
-                        <span class="chip">Общие навыки: {{ $line->line_skills_count }}</span>
-                    </div>
-
-                    <div class="tags" style="margin-top:12px;">
-                        <a class="btn" href="{{ route('weapon-lines.show', $line->slug) }}">Открыть ветку</a>
-                        <a class="btn" href="{{ route('admin.weapon-lines.edit', $line->id) }}">Редактировать</a>
-                    </div>
-                </article>
-            @empty
-                <p class="muted">Ветки ещё не созданы. Нажмите «Добавить новую ветку», чтобы начать.</p>
-            @endforelse
-        </div>
-
-        <div style="margin-top:18px;">
-            {{ $lines->links() }}
-        </div>
-    </section>
+    <div class="mt-6">
+        {{ $lines->links() }}
+    </div>
 @endsection

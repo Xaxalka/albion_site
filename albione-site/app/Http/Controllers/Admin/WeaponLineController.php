@@ -12,10 +12,16 @@ class WeaponLineController extends Controller
 {
     public function index()
     {
-        $lines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)
-            ->withCount(['weapons', 'lineSkills'])
+        $q = request('q');
+
+        $lines = WeaponLine::withCount(['weapons', 'lineSkills'])
+            ->when($q, function ($query, $q) {
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('slug', 'like', "%{$q}%");
+            })
             ->orderBy('name')
-            ->paginate(9);
+            ->paginate(9)
+            ->appends(['q' => $q]);
 
         return view('admin.weapon-lines.index', compact('lines'));
     }
@@ -32,7 +38,6 @@ class WeaponLineController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::in(WeaponLine::ALLOWED_NAMES),
                 Rule::unique('weapon_lines', 'name'),
             ],
             'slug' => ['nullable', 'string', 'max:255', 'unique:weapon_lines,slug'],
@@ -62,7 +67,6 @@ class WeaponLineController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::in(WeaponLine::ALLOWED_NAMES),
                 Rule::unique('weapon_lines', 'name')->ignore($line->id),
             ],
             'slug' => ['nullable', 'string', 'max:255', 'unique:weapon_lines,slug,' . $line->id],
@@ -74,5 +78,13 @@ class WeaponLineController extends Controller
         $line->update($validated);
 
         return redirect()->route('admin.weapon-lines.index')->with('status', 'Weapon line updated.');
+    }
+
+    public function destroy(int $id)
+    {
+        $line = WeaponLine::findOrFail($id);
+        $line->delete();
+
+        return redirect()->route('admin.weapon-lines.index')->with('status', 'Weapon line deleted.');
     }
 }

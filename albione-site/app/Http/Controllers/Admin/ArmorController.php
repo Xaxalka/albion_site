@@ -11,9 +11,16 @@ class ArmorController extends Controller
 {
     public function index()
     {
+        $q = request('q');
+
         $items = ArmorItem::query()
+            ->when($q, function ($query, $q) {
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('slug', 'like', "%{$q}%");
+            })
             ->orderByDesc('created_at')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends(['q' => $q]);
 
         return view('admin.armor.index', compact('items'));
     }
@@ -74,5 +81,13 @@ class ArmorController extends Controller
         $item->update($validated);
 
         return redirect()->route('admin.armor.index')->with('status', 'Armor item updated.');
+    }
+
+    public function destroy(int $id)
+    {
+        $item = ArmorItem::findOrFail($id);
+        $item->delete();
+
+        return redirect()->route('admin.armor.index')->with('status', 'Armor item deleted.');
     }
 }

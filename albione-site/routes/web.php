@@ -58,6 +58,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/weapon-lines', [AdminWeaponLineController::class, 'store'])->name('weapon-lines.store');
     Route::get('/weapon-lines/{id}/edit', [AdminWeaponLineController::class, 'edit'])->name('weapon-lines.edit');
     Route::put('/weapon-lines/{id}', [AdminWeaponLineController::class, 'update'])->name('weapon-lines.update');
+    Route::delete('/weapon-lines/{id}', [AdminWeaponLineController::class, 'destroy'])->name('weapon-lines.destroy');
 
     Route::get('/weapon-lines/{weaponLineId}/skills/create', [AdminLineSkillController::class, 'create'])->name('line-skills.create');
     Route::post('/weapon-lines/{weaponLineId}/skills', [AdminLineSkillController::class, 'store'])->name('line-skills.store');
@@ -69,6 +70,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/weapons', [AdminWeaponController::class, 'store'])->name('weapons.store');
     Route::get('/weapons/{id}/edit', [AdminWeaponController::class, 'edit'])->name('weapons.edit');
     Route::put('/weapons/{id}', [AdminWeaponController::class, 'update'])->name('weapons.update');
+    Route::delete('/weapons/{id}', [AdminWeaponController::class, 'destroy'])->name('weapons.destroy');
 
     Route::get('/weapons/{weaponId}/skill', [AdminWeaponSkillController::class, 'edit'])->name('weapon-skills.edit');
     Route::put('/weapons/{weaponId}/skill', [AdminWeaponSkillController::class, 'update'])->name('weapon-skills.update');
@@ -78,4 +80,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/armor', [AdminArmorController::class, 'store'])->name('armor.store');
     Route::get('/armor/{id}/edit', [AdminArmorController::class, 'edit'])->name('armor.edit');
     Route::put('/armor/{id}', [AdminArmorController::class, 'update'])->name('armor.update');
+    Route::delete('/armor/{id}', [AdminArmorController::class, 'destroy'])->name('armor.destroy');
 });

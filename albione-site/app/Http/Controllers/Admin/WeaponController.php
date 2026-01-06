@@ -12,7 +12,16 @@ class WeaponController extends Controller
 {
     public function index()
     {
-        $weapons = Weapon::with('weaponLine')->orderByDesc('created_at')->paginate(10);
+        $q = request('q');
+
+        $weapons = Weapon::with('weaponLine')
+            ->when($q, function ($query, $q) {
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('slug', 'like', "%{$q}%");
+            })
+            ->orderByDesc('created_at')
+            ->paginate(10)
+            ->appends(['q' => $q]);
 
         return view('admin.weapons.index', compact('weapons'));
     }
@@ -70,5 +79,13 @@ class WeaponController extends Controller
         $weapon->update($validated);
 
         return redirect()->route('admin.weapons.index')->with('status', 'Weapon updated.');
+    }
+
+    public function destroy(int $id)
+    {
+        $weapon = Weapon::findOrFail($id);
+        $weapon->delete();
+
+        return redirect()->route('admin.weapons.index')->with('status', 'Weapon deleted.');
     }
 }
