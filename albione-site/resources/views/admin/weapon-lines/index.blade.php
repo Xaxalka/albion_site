@@ -1,6 +1,10 @@
 @php($title = 'Управление ветками')
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-tables.css') }}">
+@endpush
+
 @section('content')
     <div class="flex items-center justify-between mb-6">
         <div>
@@ -12,6 +16,7 @@
         </a>
     </div>
 
+    <div class="admin-scope">
     <form method="GET" class="admin-search-form" action="{{ route('admin.weapon-lines.index') }}">
         <input name="q" value="{{ request('q') }}" placeholder="Поиск по названию или slug" class="admin-search-input" />
         <button type="submit" class="admin-search-button">Найти</button>
@@ -55,11 +60,11 @@
                         </td>
                         <td class="admin-td" style="color: #6b7280;">{{ $line->updated_at->format('d.m.Y') }}</td>
                         <td class="admin-td" style="text-align: right;">
-                            <div class="admin-actions">
+                            <div class="admin-actions admin-actions-column">
                                 <a href="{{ route('admin.weapon-lines.edit', $line->id) }}" class="admin-action-link">Редактировать</a>
-                                <span class="admin-muted">·</span>
+                                <span class="admin-muted"></span>
                                 <a href="{{ route('weapon-lines.show', $line->slug) }}" class="admin-muted">Просмотр</a>
-                                <span class="admin-muted">·</span>
+                                <span class="admin-muted"></span>
                                 <form method="POST" action="{{ route('admin.weapon-lines.destroy', $line->id) }}" style="display:inline;" onsubmit="return confirm('Вы уверены?')">
                                     @csrf
                                     @method('DELETE')

@@ -186,9 +186,7 @@
             .site-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
-    @if(request()->routeIs('admin.*'))
-        <link rel="stylesheet" href="{{ asset('css/admin-tables.css') }}">
-    @endif
+    @stack('styles')
 </head>
 <body>
 <div class="page-shell">
@@ -210,7 +208,7 @@
                 @if($isAdmin)
                     <a href="{{ route('admin.weapon-lines.index') }}">Ветки (админ)</a>
                     <a href="{{ route('admin.weapons.index') }}">Оружие (админ)</a>
-                    <a href="{{ route('admin.armor.index') }}">Броня (админ)</a>
+                    <a href="{{ route('admin.armor-items.index') }}">Броня (админ)</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

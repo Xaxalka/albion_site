@@ -22,12 +22,12 @@ class ArmorController extends Controller
             ->paginate(10)
             ->appends(['q' => $q]);
 
-        return view('admin.armor.index', compact('items'));
+        return view('admin.armor-items.armor-list', compact('items'));
     }
 
     public function create()
     {
-        return view('admin.armor.create');
+        return view('admin.armor-items.armor-form');
     }
 
     public function store(Request $request)
@@ -49,14 +49,14 @@ class ArmorController extends Controller
 
         ArmorItem::create($validated);
 
-        return redirect()->route('admin.armor.index')->with('status', 'Armor item created.');
+        return redirect()->route('admin.armor-items.index')->with('status', 'Armor item created.');
     }
 
     public function edit(int $id)
     {
         $item = ArmorItem::findOrFail($id);
 
-        return view('admin.armor.edit', compact('item'));
+        return view('admin.armor-items.armor-form', compact('item'));
     }
 
     public function update(Request $request, int $id)
@@ -80,7 +80,7 @@ class ArmorController extends Controller
 
         $item->update($validated);
 
-        return redirect()->route('admin.armor.index')->with('status', 'Armor item updated.');
+        return redirect()->route('admin.armor-items.index')->with('status', 'Armor item updated.');
     }
 
     public function destroy(int $id)
@@ -88,6 +88,6 @@ class ArmorController extends Controller
         $item = ArmorItem::findOrFail($id);
         $item->delete();
 
-        return redirect()->route('admin.armor.index')->with('status', 'Armor item deleted.');
+        return redirect()->route('admin.armor-items.index')->with('status', 'Armor item deleted.');
     }
 }

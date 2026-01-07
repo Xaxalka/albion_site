@@ -75,10 +75,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/weapons/{weaponId}/skill', [AdminWeaponSkillController::class, 'edit'])->name('weapon-skills.edit');
     Route::put('/weapons/{weaponId}/skill', [AdminWeaponSkillController::class, 'update'])->name('weapon-skills.update');
 
-    Route::get('/armor', [AdminArmorController::class, 'index'])->name('armor.index');
-    Route::get('/armor/create', [AdminArmorController::class, 'create'])->name('armor.create');
-    Route::post('/armor', [AdminArmorController::class, 'store'])->name('armor.store');
-    Route::get('/armor/{id}/edit', [AdminArmorController::class, 'edit'])->name('armor.edit');
-    Route::put('/armor/{id}', [AdminArmorController::class, 'update'])->name('armor.update');
-    Route::delete('/armor/{id}', [AdminArmorController::class, 'destroy'])->name('armor.destroy');
+    Route::get('/armor', [AdminArmorController::class, 'index'])->name('armor-items.index');
+    Route::get('/armor/create', [AdminArmorController::class, 'create'])->name('armor-items.create');
+    Route::post('/armor', [AdminArmorController::class, 'store'])->name('armor-items.store');
+    Route::get('/armor/{id}/edit', [AdminArmorController::class, 'edit'])->name('armor-items.edit');
+    Route::put('/armor/{id}', [AdminArmorController::class, 'update'])->name('armor-items.update');
+    Route::delete('/armor/{id}', [AdminArmorController::class, 'destroy'])->name('armor-items.destroy');
 });
