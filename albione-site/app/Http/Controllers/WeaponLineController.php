@@ -10,8 +10,7 @@ class WeaponLineController extends Controller
     public function index()
     {
         $data = Cache::remember('weapon-lines.index', now()->addMinutes(10), function () {
-            $lines = WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)
-                ->with(['weapons' => function ($query) {
+            $lines = WeaponLine::with(['weapons' => function ($query) {
                     $query->orderBy('name');
                 }])->orderBy('name')->get();
 
@@ -30,7 +29,7 @@ class WeaponLineController extends Controller
     public function show(string $slug)
     {
         $line = Cache::remember("weapon-lines.show:{$slug}", now()->addMinutes(10), function () use ($slug) {
-            return WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)->with([
+            return WeaponLine::with([
                 'lineSkills' => fn ($query) => $query->orderByRaw("FIELD(slot, 'Q','W','Passive')")->orderBy('name'),
                 'weapons.weaponSkill',
             ])->where('slug', $slug)->firstOrFail();

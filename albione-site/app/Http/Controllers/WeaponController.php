@@ -20,8 +20,7 @@ class WeaponController extends Controller
             : 'weapons.index:all';
 
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($weaponLineId) {
-            $query = Weapon::with(['weaponLine', 'weaponSkill.media'])
-                ->whereHas('weaponLine', fn ($q) => $q->whereIn('name', WeaponLine::ALLOWED_NAMES));
+            $query = Weapon::with(['weaponLine', 'weaponSkill.media']);
 
             if ($weaponLineId) {
                 $query->where('weapon_line_id', $weaponLineId);
@@ -29,9 +28,7 @@ class WeaponController extends Controller
 
             return [
                 'weapons' => $query->orderBy('name')->get(),
-                'weaponLines' => WeaponLine::whereIn('name', WeaponLine::ALLOWED_NAMES)
-                    ->orderBy('name')
-                    ->get(),
+                'weaponLines' => WeaponLine::orderBy('name')->get(),
             ];
         });
 
@@ -43,7 +40,6 @@ class WeaponController extends Controller
         $weapon = Cache::remember("weapons.show:{$slug}", now()->addMinutes(10), function () use ($slug) {
             return Weapon::with('weaponSkill.media')
                 ->where('slug', $slug)
-                ->whereHas('weaponLine', fn ($q) => $q->whereIn('name', WeaponLine::ALLOWED_NAMES))
                 ->firstOrFail();
         });
 
