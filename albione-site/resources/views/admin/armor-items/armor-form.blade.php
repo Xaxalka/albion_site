@@ -1,6 +1,7 @@
 @php
     $isEdit = isset($item);
     $title = $isEdit ? 'Edit Armor' : 'Create Armor';
+    use Illuminate\Support\Str;
 @endphp
 @extends('layouts.app')
 
@@ -100,4 +101,44 @@
             @endif
         </div>
     </form>
+
+    @if($isEdit)
+        <div class="mt-8">
+            <div class="mb-4">
+                <h2 class="text-xl font-bold text-slate-900">Armor Skills</h2>
+                <p class="text-sm text-slate-600">Manage armor abilities and effects.</p>
+            </div>
+
+            <div class="space-y-4">
+                @if($item->armorSkills && $item->armorSkills->count() > 0)
+                    @foreach($item->armorSkills as $skill)
+                        <div class="rounded-lg border border-slate-200 bg-white p-4">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="font-semibold text-slate-900">{{ $skill->name }}</h3>
+                                    @if($skill->description)
+                                        <p class="text-sm text-slate-600 mt-1">{{ Str::limit($skill->description, 100) }}</p>
+                                    @endif
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="{{ route('admin.armor-skills.edit', $skill->id) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Edit</a>
+                                    <form action="{{ route('admin.armor-skills.destroy', $skill->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-sm text-red-600 hover:text-red-800" onclick="return confirm('Delete this skill?')">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-sm text-slate-600">No skills added yet.</p>
+                @endif
+
+                <a href="{{ route('admin.armor-skills.create', $item->id) }}" class="inline-block rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
+                    + Add Skill
+                </a>
+            </div>
+        </div>
+    @endif
 @endsection

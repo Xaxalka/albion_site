@@ -9,7 +9,10 @@
     <h1>{{ $weapon->name }}</h1>
     <p>{{ $weapon->description }}</p>
     @php
-        $latestMedia = optional($weapon->weaponSkill?->media)->sortByDesc('created_at')->first();
+        $latestMedia = null;
+        if ($weapon->weaponSkill && $weapon->weaponSkill->media->count() > 0) {
+            $latestMedia = $weapon->weaponSkill->media->sortByDesc('created_at')->first();
+        }
         $iconUrl = null;
 
         if ($latestMedia) {
@@ -77,4 +80,13 @@
         </tbody>
     </table>
 </section>
+
+@if($weapon->weaponSkill)
+    <section class="panel">
+        <div class="subtle-title">Скилл оружия (E)</div>
+        <div class="content-area">
+            <x-skill-hover-popup :skill="$weapon->weaponSkill" />
+        </div>
+    </section>
+@endif
 @endsection

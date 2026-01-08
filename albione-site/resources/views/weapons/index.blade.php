@@ -42,7 +42,10 @@
         <div class="card-grid" style="grid-template-columns: 1fr; gap:18px;">
             @forelse($weapons as $weapon)
                 @php
-                    $latestMedia = optional($weapon->weaponSkill?->media)->sortByDesc('created_at')->first();
+                    $latestMedia = null;
+                    if ($weapon->weaponSkill && $weapon->weaponSkill->media->count() > 0) {
+                        $latestMedia = $weapon->weaponSkill->media->sortByDesc('created_at')->first();
+                    }
                     $iconUrl = null;
 
                     if ($latestMedia) {

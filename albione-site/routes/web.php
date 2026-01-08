@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Admin\LineSkillController as AdminLineSkillController;
 use App\Http\Controllers\Admin\ArmorController as AdminArmorController;
+use App\Http\Controllers\Admin\ArmorSkillController as AdminArmorSkillController;
 use App\Http\Controllers\Admin\WeaponController as AdminWeaponController;
 use App\Http\Controllers\Admin\WeaponLineController as AdminWeaponLineController;
 use App\Http\Controllers\Admin\WeaponSkillController as AdminWeaponSkillController;
+use App\Http\Controllers\Api\MediaController as ApiMediaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SkillMediaController;
@@ -50,6 +52,13 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
+// API Routes for media
+Route::middleware('auth')->prefix('api')->group(function () {
+    Route::post('/media/upload', [ApiMediaController::class, 'upload'])->name('api.media.upload');
+    Route::get('/media', [ApiMediaController::class, 'index'])->name('api.media.index');
+    Route::delete('/media/{media}', [ApiMediaController::class, 'destroy'])->name('api.media.destroy');
+});
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn () => redirect()->route('admin.weapon-lines.index'))->name('dashboard');
 
@@ -81,4 +90,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/armor/{id}/edit', [AdminArmorController::class, 'edit'])->name('armor-items.edit');
     Route::put('/armor/{id}', [AdminArmorController::class, 'update'])->name('armor-items.update');
     Route::delete('/armor/{id}', [AdminArmorController::class, 'destroy'])->name('armor-items.destroy');
+
+    Route::get('/armor/{armorId}/skills/create', [AdminArmorSkillController::class, 'create'])->name('armor-skills.create');
+    Route::post('/armor/{armorId}/skills', [AdminArmorSkillController::class, 'store'])->name('armor-skills.store');
+    Route::get('/armor-skills/{id}/edit', [AdminArmorSkillController::class, 'edit'])->name('armor-skills.edit');
+    Route::put('/armor-skills/{id}', [AdminArmorSkillController::class, 'update'])->name('armor-skills.update');
+    Route::delete('/armor-skills/{id}', [AdminArmorSkillController::class, 'destroy'])->name('armor-skills.destroy');
 });

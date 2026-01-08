@@ -54,7 +54,7 @@ class ArmorController extends Controller
 
     public function edit(int $id)
     {
-        $item = ArmorItem::findOrFail($id);
+        $item = ArmorItem::with('armorSkills.media')->findOrFail($id);
 
         return view('admin.armor-items.armor-form', compact('item'));
     }

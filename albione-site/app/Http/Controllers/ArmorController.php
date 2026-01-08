@@ -56,7 +56,7 @@ class ArmorController extends Controller
     public function show(string $slug)
     {
         $item = Cache::remember("armor.show:{$slug}", now()->addMinutes(10), function () use ($slug) {
-            return ArmorItem::where('slug', $slug)->firstOrFail();
+            return ArmorItem::with('armorSkills.media')->where('slug', $slug)->firstOrFail();
         });
 
         return view('armor.show', compact('item'));

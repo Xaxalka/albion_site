@@ -76,4 +76,9 @@ class ArmorItem extends Model
             default => self::slotLabel($slot),
         };
     }
+
+    public function armorSkills()
+    {
+        return $this->hasMany(ArmorSkill::class);
+    }
 }

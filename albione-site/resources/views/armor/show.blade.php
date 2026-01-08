@@ -65,4 +65,15 @@
         </tbody>
     </table>
 </section>
+
+@if($item->armorSkills && $item->armorSkills->count() > 0)
+    <section class="panel">
+        <div class="subtle-title">Скиллы брони</div>
+        <div class="content-area" style="display: flex; flex-wrap: wrap; gap: 12px;">
+            @foreach($item->armorSkills as $skill)
+                <x-skill-hover-popup :skill="$skill" />
+            @endforeach
+        </div>
+    </section>
+@endif
 @endsection

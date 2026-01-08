@@ -14,6 +14,11 @@ class SkillMedia extends Model
         'disk',
         'original_name',
         'is_private',
+        'type',
+    ];
+
+    protected $casts = [
+        'type' => 'string',
     ];
 
     public function skillable()

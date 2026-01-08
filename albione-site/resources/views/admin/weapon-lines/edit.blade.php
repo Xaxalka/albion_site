@@ -13,18 +13,18 @@
         <div class="grid md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-slate-700">Name</label>
-                <input name="name" value="{{ old('name', $line->name) }}" class="mt-1 w-full rounded border-slate-300" required>
+                <input name="name" value="{{ old('name', $line->name) }}" class="mt-1 w-full rounded border border-slate-300" required>
                 @error('name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700">Slug</label>
-                <input name="slug" value="{{ old('slug', $line->slug) }}" class="mt-1 w-full rounded border-slate-300">
+                <input name="slug" value="{{ old('slug', $line->slug) }}" class="mt-1 w-full rounded border border-slate-300">
                 @error('slug')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
         </div>
         <div>
             <label class="block text-sm font-medium text-slate-700">Description</label>
-            <textarea name="description" rows="4" class="mt-1 w-full rounded border-slate-300">{{ old('description', $line->description) }}</textarea>
+            <textarea name="description" rows="4" class="mt-1 w-full rounded border border-slate-300">{{ old('description', $line->description) }}</textarea>
             @error('description')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
         <div class="flex items-center gap-3">
