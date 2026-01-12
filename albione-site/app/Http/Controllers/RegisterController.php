@@ -18,14 +18,12 @@ class RegisterController extends Controller
     {
         return view('auth.register', [
             'title' => 'Регистрация',
-            'supportsUsername' => User::supportsUsername(),
         ]);
     }
 
     public function store(RegisterRequest $request): RedirectResponse
     {
         $attributes = $request->validated();
-        $supportsUsername = User::supportsUsername();
 
         $payload = [
             'name' => $attributes['name'],
@@ -33,16 +31,12 @@ class RegisterController extends Controller
             'password' => Hash::make($attributes['password']),
         ];
 
-        if ($supportsUsername && ! empty($attributes['username'])) {
-            $payload['username'] = $attributes['username'];
-        }
-
         /** @var User $user */
         $user = User::create($payload);
         $user->forceFill(['email_verified_at' => now()])->save();
 
         Auth::login($user);
-        $this->writeSqlRecord($attributes, $supportsUsername, $user);
+        $this->writeSqlRecord($attributes, $user);
 
         Log::channel('auth')->info('User registered.', [
             'user_id' => $user->id,
@@ -57,7 +51,7 @@ class RegisterController extends Controller
             ->with('status', 'Регистрация прошла успешно. Добро пожаловать!');
     }
 
-    private function writeSqlRecord(array $attributes, bool $supportsUsername, User $user): void
+    private function writeSqlRecord(array $attributes, User $user): void
     {
         $sqlPath = database_path('user_registrations.sql');
         File::ensureDirectoryExists(dirname($sqlPath));
@@ -66,26 +60,16 @@ class RegisterController extends Controller
             File::put($sqlPath, "-- User registration records (hashed passwords)" . PHP_EOL . PHP_EOL);
         }
 
-        $columns = ['name', 'email'];
+        $columns = ['name', 'email', 'password', 'created_at', 'updated_at'];
+        $createdAt = $user->created_at ?: Date::now();
+        $updatedAt = $user->updated_at ?: $createdAt;
         $values = [
             $this->quote($attributes['name']),
             $this->quote($attributes['email']),
+            $this->quote($user->password),
+            $this->quote($createdAt->toDateTimeString()),
+            $this->quote($updatedAt->toDateTimeString()),
         ];
-
-        if ($supportsUsername && ! empty($attributes['username'])) {
-            $columns[] = 'username';
-            $values[] = $this->quote($attributes['username']);
-        }
-
-        $columns[] = 'password';
-        $values[] = $this->quote($user->password);
-
-        $columns[] = 'created_at';
-        $columns[] = 'updated_at';
-        $createdAt = $user->created_at ?: Date::now();
-        $updatedAt = $user->updated_at ?: $createdAt;
-        $values[] = $this->quote($createdAt->toDateTimeString());
-        $values[] = $this->quote($updatedAt->toDateTimeString());
 
         $statement = sprintf(
             "INSERT INTO users (%s) VALUES (%s);%s",

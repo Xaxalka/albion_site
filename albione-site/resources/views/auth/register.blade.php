@@ -19,16 +19,6 @@
                 @enderror
             </div>
 
-            @if($supportsUsername ?? false)
-                <div>
-                    <label for="username">Логин</label>
-                    <input id="username" name="username" type="text" value="{{ old('username') }}" required>
-                    @error('username')
-                        <p class="alert" role="alert">{{ $message }}</p>
-                    @enderror
-                </div>
-            @endif
-
             <div>
                 <label for="email">Email</label>
                 <input id="email" name="email" type="email" value="{{ old('email') }}" required>
