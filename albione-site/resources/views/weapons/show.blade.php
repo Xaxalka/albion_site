@@ -9,23 +9,18 @@
     <h1>{{ $weapon->name }}</h1>
     <p>{{ $weapon->description }}</p>
     @php
-        $latestMedia = null;
-        if ($weapon->weaponSkill && $weapon->weaponSkill->media->count() > 0) {
-            $latestMedia = $weapon->weaponSkill->media->sortByDesc('created_at')->first();
-        }
+        $eSkill = $skillGroups['eSkills']->first(fn ($skill) => ! $skill->is_placeholder);
         $iconUrl = null;
 
-        if ($latestMedia) {
-            $iconUrl = $latestMedia->disk === 'url'
-                ? $latestMedia->path
-                : \Illuminate\Support\Facades\URL::temporarySignedRoute('media.show', now()->addMinutes(30), ['media' => $latestMedia]);
+        if ($eSkill?->icon) {
+            $iconUrl = $eSkill->icon;
         } elseif ($weapon->icon) {
             $iconUrl = $weapon->icon;
         }
     @endphp
     @if($iconUrl)
         <div style="margin-top:12px; width:88px; height:88px; border-radius:18px; border:1px solid var(--line); background: rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; overflow:hidden;">
-            <img src="{{ $iconUrl }}" alt="Иконка {{ $weapon->weaponSkill?->name ?? $weapon->name }}" style="width:100%; height:100%; object-fit:contain;">
+            <img src="{{ $iconUrl }}" alt="Иконка {{ $eSkill?->name ?? $weapon->name }}" style="width:100%; height:100%; object-fit:contain;">
         </div>
     @endif
     @if($weapon->image)
@@ -81,12 +76,42 @@
     </table>
 </section>
 
-@if($weapon->weaponSkill)
-    <section class="panel">
-        <div class="subtle-title">Скилл оружия (E)</div>
-        <div class="content-area">
-            <x-skill-hover-popup :skill="$weapon->weaponSkill" />
+<section class="panel">
+    <div class="subtle-title">Навыки ветки</div>
+    <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px;">
+        <div class="card">
+            <div class="meta">Q</div>
+            @forelse($skillGroups['qSkills'] as $skill)
+                <div style="margin-top:8px;">
+                    <h3>{{ $skill->name }}</h3>
+                    <p class="muted" style="margin-top:4px;">{{ $skill->description }}</p>
+                </div>
+            @empty
+                <p class="muted">Нет Q навыков.</p>
+            @endforelse
         </div>
-    </section>
-@endif
+        <div class="card">
+            <div class="meta">W</div>
+            @forelse($skillGroups['wSkills'] as $skill)
+                <div style="margin-top:8px;">
+                    <h3>{{ $skill->name }}</h3>
+                    <p class="muted" style="margin-top:4px;">{{ $skill->description }}</p>
+                </div>
+            @empty
+                <p class="muted">Нет W навыков.</p>
+            @endforelse
+        </div>
+        <div class="card">
+            <div class="meta">E</div>
+            @forelse($skillGroups['eSkills'] as $skill)
+                <div style="margin-top:8px;">
+                    <h3>{{ $skill->name }}</h3>
+                    <p class="muted" style="margin-top:4px;">{{ $skill->description }}</p>
+                </div>
+            @empty
+                <p class="muted">Нет E навыков.</p>
+            @endforelse
+        </div>
+    </div>
+</section>
 @endsection

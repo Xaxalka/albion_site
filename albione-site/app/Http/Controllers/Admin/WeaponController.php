@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Weapon;
 use App\Models\WeaponLine;
 use Illuminate\Http\Request;
@@ -46,15 +47,21 @@ class WeaponController extends Controller
         ]);
 
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);
+        $line = WeaponLine::findOrFail($validated['weapon_line_id']);
+        $branch = $line->branch ?: Branch::create([
+            'key' => $line->slug,
+            'name' => $line->name,
+            'description' => $line->description,
+        ]);
 
-        Weapon::create($validated);
+        Weapon::create(array_merge($validated, ['branch_id' => $branch->id]));
 
         return redirect()->route('admin.weapons.index')->with('status', 'Weapon created.');
     }
 
     public function edit(int $id)
     {
-        $weapon = Weapon::with(['weaponSkill.media', 'weaponLine.lineSkills'])->findOrFail($id);
+        $weapon = Weapon::with(['weaponLine', 'branch.skills'])->findOrFail($id);
         $weaponLines = WeaponLine::orderBy('name')->get();
 
         return view('admin.weapons.edit', compact('weapon', 'weaponLines'));
@@ -76,7 +83,14 @@ class WeaponController extends Controller
 
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);
 
-        $weapon->update($validated);
+        $line = WeaponLine::findOrFail($validated['weapon_line_id']);
+        $branch = $line->branch ?: Branch::create([
+            'key' => $line->slug,
+            'name' => $line->name,
+            'description' => $line->description,
+        ]);
+
+        $weapon->update(array_merge($validated, ['branch_id' => $branch->id]));
 
         return redirect()->route('admin.weapons.index')->with('status', 'Weapon updated.');
     }

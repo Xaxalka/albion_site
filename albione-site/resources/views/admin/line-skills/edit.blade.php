@@ -3,8 +3,8 @@
 
 @section('content')
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-slate-900">Edit Skill ({{ $skill->weaponLine->name }})</h1>
-        <p class="text-sm text-slate-600">Shared Q/W/Passive skill.</p>
+        <h1 class="text-2xl font-bold text-slate-900">Edit Skill ({{ $line->name }})</h1>
+        <p class="text-sm text-slate-600">Shared Q/W/E skill.</p>
     </div>
 
     <form action="{{ route('admin.line-skills.update', $skill->id) }}" method="POST" class="space-y-4 rounded-lg border border-slate-200 bg-white p-6">
@@ -14,7 +14,7 @@
             <div>
                 <label class="block text-sm font-medium text-slate-700">Slot</label>
                 <select name="slot" class="mt-1 w-full rounded border-slate-300" required>
-                    @foreach(['Q','W','Passive'] as $slot)
+                    @foreach(['Q','W','E'] as $slot)
                         <option value="{{ $slot }}" @selected(old('slot', $skill->slot) === $slot)>{{ $slot }}</option>
                     @endforeach
                 </select>
@@ -32,13 +32,18 @@
             @error('description')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
         <div>
-            <label class="block text-sm font-medium text-slate-700">Author Notes</label>
-            <textarea name="author_notes" rows="3" class="mt-1 w-full rounded border-slate-300">{{ old('author_notes', $skill->author_notes) }}</textarea>
-            @error('author_notes')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            <label class="block text-sm font-medium text-slate-700">Icon URL</label>
+            <input name="icon" value="{{ old('icon', $skill->icon) }}" class="mt-1 w-full rounded border-slate-300">
+            @error('icon')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-700">Sort</label>
+            <input name="sort" type="number" value="{{ old('sort', $skill->sort) }}" class="mt-1 w-full rounded border-slate-300">
+            @error('sort')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
         <div class="flex items-center gap-3">
             <button class="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" type="submit">Update</button>
-            <a href="{{ route('admin.weapon-lines.edit', $skill->weapon_line_id) }}" class="text-sm text-slate-600 hover:text-slate-800">Cancel</a>
+            <a href="{{ route('admin.weapon-lines.edit', $line->id) }}" class="text-sm text-slate-600 hover:text-slate-800">Cancel</a>
         </div>
     </form>
 @endsection

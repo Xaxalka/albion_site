@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Weapon;
 use App\Models\WeaponLine;
+use App\Models\Branch;
+use App\Models\Skill;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -21,7 +23,6 @@ class WeaponSeeder extends Seeder
                 'skills' => [
                     ['slot' => 'Q', 'name' => 'Heroic Strike', 'description' => 'Single-target strike building heroism.'],
                     ['slot' => 'W', 'name' => 'Splitting Slash', 'description' => 'Arc slash that slows enemies.'],
-                    ['slot' => 'Passive', 'name' => 'Heroic Aura', 'description' => 'Gain movement speed on hit.'],
                 ],
                 'weapons' => [
                     [
@@ -46,7 +47,6 @@ class WeaponSeeder extends Seeder
                 'skills' => [
                     ['slot' => 'Q', 'name' => 'Deadly Shot', 'description' => 'Piercing arrow stacking damage.'],
                     ['slot' => 'W', 'name' => 'Frost Shot', 'description' => 'Jump back and slow enemies.'],
-                    ['slot' => 'Passive', 'name' => 'Energetic', 'description' => 'Regain energy on hit.'],
                 ],
                 'weapons' => [
                     [
@@ -64,7 +64,6 @@ class WeaponSeeder extends Seeder
                 'skills' => [
                     ['slot' => 'Q', 'name' => 'Fire Bolt', 'description' => 'Ranged burning projectile.'],
                     ['slot' => 'W', 'name' => 'Ignite', 'description' => 'Apply burning stacks.'],
-                    ['slot' => 'Passive', 'name' => 'Burn', 'description' => 'Auto-attacks add burn damage.'],
                 ],
                 'weapons' => [
                     [
@@ -88,12 +87,24 @@ class WeaponSeeder extends Seeder
                 ]
             );
 
+            $branch = Branch::updateOrCreate(
+                ['key' => $line->slug],
+                [
+                    'name' => $line->name,
+                    'description' => $line->description,
+                ]
+            );
+
             foreach ($lineData['skills'] as $skill) {
-                $line->lineSkills()->updateOrCreate(
-                    ['slot' => $skill['slot'], 'name' => $skill['name']],
+                Skill::updateOrCreate(
+                    [
+                        'branch_id' => $branch->id,
+                        'slot' => $skill['slot'],
+                        'name' => $skill['name'],
+                    ],
                     [
                         'description' => $skill['description'],
-                        'author_notes' => $skill['author_notes'] ?? null,
+                        'sort' => 0,
                     ]
                 );
             }
@@ -102,6 +113,7 @@ class WeaponSeeder extends Seeder
                 $weapon = Weapon::updateOrCreate(
                     ['slug' => Str::slug($weaponData['name'])],
                     [
+                        'branch_id' => $branch->id,
                         'weapon_line_id' => $line->id,
                         'name' => $weaponData['name'],
                         'slug' => Str::slug($weaponData['name']),
@@ -112,12 +124,15 @@ class WeaponSeeder extends Seeder
                 );
 
                 if (! empty($weaponData['skill'])) {
-                    $weapon->weaponSkill()->updateOrCreate(
-                        ['weapon_id' => $weapon->id],
+                    Skill::updateOrCreate(
                         [
+                            'branch_id' => $branch->id,
+                            'slot' => 'E',
                             'name' => $weaponData['skill']['name'],
+                        ],
+                        [
                             'description' => $weaponData['skill']['description'] ?? null,
-                            'author_notes' => $weaponData['skill']['author_notes'] ?? null,
+                            'sort' => $weapon->id,
                         ]
                     );
                 }

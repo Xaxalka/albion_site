@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Weapon;
 use App\Models\WeaponLine;
+use App\Services\WeaponSkillService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,7 +21,7 @@ class WeaponController extends Controller
             : 'weapons.index:all';
 
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($weaponLineId) {
-            $query = Weapon::with(['weaponLine', 'weaponSkill.media']);
+            $query = Weapon::with(['weaponLine', 'branch.skills']);
 
             if ($weaponLineId) {
                 $query->where('weapon_line_id', $weaponLineId);
@@ -35,14 +36,16 @@ class WeaponController extends Controller
         return view('weapons.index', $data);
     }
 
-    public function show(string $slug)
+    public function show(string $slug, WeaponSkillService $weaponSkillService)
     {
         $weapon = Cache::remember("weapons.show:{$slug}", now()->addMinutes(10), function () use ($slug) {
-            return Weapon::with('weaponSkill.media')
+            return Weapon::with(['branch.skills', 'weaponLine'])
                 ->where('slug', $slug)
                 ->firstOrFail();
         });
 
-        return view('weapons.show', compact('weapon'));
+        $skillGroups = $weaponSkillService->getBranchSkillsForWeapon($weapon->id);
+
+        return view('weapons.show', compact('weapon', 'skillGroups'));
     }
 }

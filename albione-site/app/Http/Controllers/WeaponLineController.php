@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\WeaponLine;
+use App\Models\Skill;
 use Illuminate\Support\Facades\Cache;
 
 class WeaponLineController extends Controller
@@ -29,12 +30,22 @@ class WeaponLineController extends Controller
     public function show(string $slug)
     {
         $line = Cache::remember("weapon-lines.show:{$slug}", now()->addMinutes(10), function () use ($slug) {
-            return WeaponLine::with([
-                'lineSkills' => fn ($query) => $query->orderByRaw("FIELD(slot, 'Q','W','Passive')")->orderBy('name'),
-                'weapons.weaponSkill',
-            ])->where('slug', $slug)->firstOrFail();
+            return WeaponLine::with(['weapons' => fn ($query) => $query->orderBy('name')])
+                ->where('slug', $slug)
+                ->firstOrFail();
         });
 
-        return view('weapon-lines.show', compact('line'));
+        $branch = $line->branch;
+        $skills = $branch
+            ? Skill::where('branch_id', $branch->id)->orderBy('sort')->get()->groupBy('slot')
+            : collect();
+
+        $skillGroups = [
+            'Q' => $skills->get('Q', collect()),
+            'W' => $skills->get('W', collect()),
+            'E' => $skills->get('E', collect()),
+        ];
+
+        return view('weapon-lines.show', compact('line', 'skillGroups'));
     }
 }

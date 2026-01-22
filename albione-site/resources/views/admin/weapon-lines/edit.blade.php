@@ -37,10 +37,10 @@
     <section class="mt-6 rounded-lg border border-slate-200 bg-white p-5">
         <div class="flex items-center justify-between mb-3">
             <h2 class="text-lg font-semibold text-slate-900">Line Skills</h2>
-            <span class="text-xs text-slate-500">{{ $line->lineSkills->count() }} skills</span>
+            <span class="text-xs text-slate-500">{{ $skills->count() }} skills</span>
         </div>
         <div class="space-y-3">
-            @forelse($line->lineSkills as $skill)
+            @forelse($skills as $skill)
                 <article class="rounded border border-slate-200 p-4 flex items-start justify-between">
                     <div>
                         <div class="flex items-center gap-2 text-sm text-slate-600">

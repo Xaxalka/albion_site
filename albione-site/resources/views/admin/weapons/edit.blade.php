@@ -62,55 +62,21 @@
         </div>
 
         @php
-            $latestMedia = ($weapon->weaponSkill?->media ?? collect())
-                ->sortByDesc('created_at')
-                ->first();
-            $iconUrl = null;
             $line = $weapon->weaponLine;
-            $slotOrder = ['Q' => 0, 'W' => 1, 'Passive' => 2];
-            $lineSkills = ($line?->lineSkills ?? collect())
-                ->sortBy(fn ($skill) => $slotOrder[$skill->slot] ?? 99);
-
-            if ($latestMedia) {
-                $iconUrl = $latestMedia->disk === 'url'
-                    ? $latestMedia->path
-                    : \Illuminate\Support\Facades\URL::temporarySignedRoute('media.show', now()->addMinutes(30), ['media' => $latestMedia]);
-            }
+            $skills = ($weapon->branch?->skills ?? collect())->sortBy('sort');
         @endphp
-        <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <div class="flex items-center justify-between mb-3">
-                <div>
-                    <div class="text-sm font-medium text-slate-700">Иконка E-скилла</div>
-                    <p class="text-xs text-slate-500">Отдельно от основного изображения. Используется в списках и деталке.</p>
-                </div>
-                <a href="{{ route('admin.weapon-skills.edit', $weapon->id) }}" class="text-sm text-indigo-700 hover:text-indigo-800">Редактировать E Skill</a>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-slate-300 bg-white overflow-hidden">
-                    @if($iconUrl)
-                        <img src="{{ $iconUrl }}" alt="Иконка {{ $weapon->weaponSkill?->name ?? $weapon->name }}" class="h-full w-full object-contain">
-                    @else
-                        <span class="text-xs text-slate-500 text-center px-2">Нет иконки</span>
-                    @endif
-                </div>
-                <div class="text-xs text-slate-600">
-                    <p>Загрузите иконку на странице E-скилла. Форматы: png/jpg/gif.</p>
-                    <p class="mt-1">Размер автоматически впишется без искажений.</p>
-                </div>
-            </div>
-        </div>
         @if($line)
             <div class="rounded-lg border border-slate-200 bg-white p-4">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <div class="text-sm font-medium text-slate-700">Навыки линии (Q/W/Passive)</div>
+                        <div class="text-sm font-medium text-slate-700">Навыки ветки (Q/W/E)</div>
                         <p class="text-xs text-slate-500">Общие для ветки {{ $line->name }}.</p>
                     </div>
                     <a href="{{ route('admin.line-skills.create', $line->id) }}" class="text-sm text-indigo-700 hover:text-indigo-800">Добавить навык линии</a>
                 </div>
-                @if($lineSkills->count() > 0)
+                @if($skills->count() > 0)
                     <div class="space-y-2">
-                        @foreach($lineSkills as $skill)
+                        @foreach($skills as $skill)
                             <div class="flex items-center justify-between rounded border border-slate-200 px-3 py-2 text-sm text-slate-700">
                                 <div class="flex items-center gap-2">
                                     <span class="rounded bg-indigo-50 px-2 py-0.5 text-indigo-700 font-semibold">{{ $skill->slot }}</span>
@@ -121,7 +87,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-xs text-slate-500">Навыков пока нет. Добавьте Q/W/Passive для ветки.</p>
+                    <p class="text-xs text-slate-500">Навыков пока нет. Добавьте Q/W/E для ветки.</p>
                 @endif
             </div>
         @endif
@@ -134,7 +100,6 @@
         <div class="flex items-center gap-3">
             <button class="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" type="submit">Update</button>
             <a href="{{ route('admin.weapons.index') }}" class="text-sm text-slate-600 hover:text-slate-800">Cancel</a>
-            <a href="{{ route('admin.weapon-skills.edit', $weapon->id) }}" class="text-sm text-indigo-700 hover:text-indigo-800">Edit E Skill</a>
         </div>
     </form>
 @endsection

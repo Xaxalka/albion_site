@@ -24,4 +24,9 @@ class WeaponLine extends Model
     {
         return $this->hasMany(LineSkill::class);
     }
+
+    public function branch()
+    {
+        return $this->hasOne(Branch::class, 'key', 'slug');
+    }
 }

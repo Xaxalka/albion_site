@@ -42,16 +42,14 @@
         <div class="card-grid" style="grid-template-columns: 1fr; gap:18px;">
             @forelse($weapons as $weapon)
                 @php
-                    $latestMedia = null;
-                    if ($weapon->weaponSkill && $weapon->weaponSkill->media->count() > 0) {
-                        $latestMedia = $weapon->weaponSkill->media->sortByDesc('created_at')->first();
-                    }
+                    $eSkill = ($weapon->branch?->skills ?? collect())
+                        ->where('slot', 'E')
+                        ->sortBy('sort')
+                        ->first(fn ($skill) => ! $skill->is_placeholder);
                     $iconUrl = null;
 
-                    if ($latestMedia) {
-                        $iconUrl = $latestMedia->disk === 'url'
-                            ? $latestMedia->path
-                            : \Illuminate\Support\Facades\URL::temporarySignedRoute('media.show', now()->addMinutes(30), ['media' => $latestMedia]);
+                    if ($eSkill?->icon) {
+                        $iconUrl = $eSkill->icon;
                     } elseif ($weapon->icon) {
                         $iconUrl = $weapon->icon;
                     }
@@ -60,7 +58,7 @@
                     <div style="display:flex; gap:16px; align-items:center;">
                         <div style="min-width:110px; width:110px; height:110px; border-radius:16px; border:1px solid var(--line); background: rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; overflow:hidden;">
                             @if($iconUrl)
-                                <img src="{{ $iconUrl }}" alt="Иконка {{ $weapon->weaponSkill?->name ?? $weapon->name }}" style="width:100%; height:100%; object-fit:contain;">
+                                <img src="{{ $iconUrl }}" alt="Иконка {{ $eSkill?->name ?? $weapon->name }}" style="width:100%; height:100%; object-fit:contain;">
                             @else
                                 <span class="muted" style="font-size:12px;">Нет иконки</span>
                             @endif
@@ -68,8 +66,8 @@
                         <div style="flex:1;">
                             <div class="tags" style="margin-top:0; gap:10px;">
                                 <span class="chip">{{ $weapon->weaponLine?->name ?? 'Без линии' }}</span>
-                                @if($weapon->weaponSkill)
-                                    <span class="chip">E: {{ $weapon->weaponSkill->name }}</span>
+                                @if($eSkill)
+                                    <span class="chip">E: {{ $eSkill->name }}</span>
                                 @endif
                             </div>
                             <h2 style="margin-top:10px;">
