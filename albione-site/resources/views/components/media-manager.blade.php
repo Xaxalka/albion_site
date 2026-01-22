@@ -22,7 +22,7 @@
                         Загрузить изображение
                     </span>
                 </label>
-                <p class="upload-hint">PNG, JPG, WebP (макс. 5 МБ)</p>
+                <p class="upload-hint">PNG, JPG, WebP (макс. 10 МБ)</p>
             </div>
 
             <div class="upload-option">
@@ -41,7 +41,7 @@
                         Загрузить GIF
                     </span>
                 </label>
-                <p class="upload-hint">GIF (макс. 10 МБ)</p>
+                <p class="upload-hint">GIF (макс. 20 МБ)</p>
             </div>
 
             <div class="upload-option">
@@ -61,6 +61,22 @@
                     </span>
                 </label>
                 <p class="upload-hint">MP4, WebM, OGG (макс. 50 МБ)</p>
+            </div>
+
+            <div class="upload-option">
+                <div class="upload-label" style="gap: 10px;">
+                    <input
+                        type="url"
+                        class="link-input"
+                        placeholder="https://... (GIF или YouTube)"
+                        x-model.trim="mediaUrl"
+                    >
+                    <div class="link-actions">
+                        <button type="button" class="upload-btn" @click="submitLink('gif')">Добавить GIF по ссылке</button>
+                        <button type="button" class="upload-btn" @click="submitLink('video')">Добавить YouTube</button>
+                    </div>
+                </div>
+                <p class="upload-hint">Ссылки: .gif или YouTube (youtu.be / youtube.com)</p>
             </div>
         </div>
 
@@ -139,13 +155,14 @@ document.addEventListener('alpine:init', () => {
         uploadProgress: 0,
         uploadError: null,
         uploadSuccess: false,
+        mediaUrl: '',
 
         async handleImageUpload(event) {
-            await this.uploadFile(event, 'image', 5);
+            await this.uploadFile(event, 'image', 10);
         },
 
         async handleGifUpload(event) {
-            await this.uploadFile(event, 'gif', 10);
+            await this.uploadFile(event, 'gif', 20);
         },
 
         async handleVideoUpload(event) {
@@ -198,6 +215,50 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        async submitLink(type) {
+            const url = (this.mediaUrl || '').trim();
+            if (!url) {
+                this.uploadError = 'Введите ссылку';
+                return;
+            }
+
+            this.uploading = true;
+            this.uploadError = null;
+            this.uploadSuccess = false;
+
+            try {
+                const response = await fetch('/api/media/upload', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type,
+                        media_url: url,
+                        skillable_id: '{{ $skillable->id }}',
+                        skillable_type: '{{ $skillableType }}'
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Ошибка добавления ссылки');
+                }
+
+                const data = await response.json();
+                this.media.push(data);
+                this.uploadSuccess = true;
+                this.mediaUrl = '';
+                setTimeout(() => this.uploadSuccess = false, 3000);
+            } catch (error) {
+                this.uploadError = error.message;
+            } finally {
+                this.uploading = false;
+                this.uploadProgress = 0;
+            }
+        },
+
         async deleteMedia(mediaId) {
             if (!confirm('Вы уверены?')) return;
 
@@ -230,6 +291,22 @@ document.addEventListener('alpine:init', () => {
     border: 1px solid var(--line);
     border-radius: 12px;
     padding: 20px;
+}
+
+.link-input {
+    flex: 1 1 240px;
+    min-width: 220px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+}
+
+.link-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .section-title {

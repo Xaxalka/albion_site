@@ -61,11 +61,15 @@
             @error('author_notes')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
 
-	        @php
-	            $latestMedia = ($weapon->weaponSkill?->media ?? collect())
-	                ->sortByDesc('created_at')
-	                ->first();
-	            $iconUrl = null;
+        @php
+            $latestMedia = ($weapon->weaponSkill?->media ?? collect())
+                ->sortByDesc('created_at')
+                ->first();
+            $iconUrl = null;
+            $line = $weapon->weaponLine;
+            $slotOrder = ['Q' => 0, 'W' => 1, 'Passive' => 2];
+            $lineSkills = ($line?->lineSkills ?? collect())
+                ->sortBy(fn ($skill) => $slotOrder[$skill->slot] ?? 99);
 
             if ($latestMedia) {
                 $iconUrl = $latestMedia->disk === 'url'
@@ -95,6 +99,32 @@
                 </div>
             </div>
         </div>
+        @if($line)
+            <div class="rounded-lg border border-slate-200 bg-white p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <div class="text-sm font-medium text-slate-700">Навыки линии (Q/W/Passive)</div>
+                        <p class="text-xs text-slate-500">Общие для ветки {{ $line->name }}.</p>
+                    </div>
+                    <a href="{{ route('admin.line-skills.create', $line->id) }}" class="text-sm text-indigo-700 hover:text-indigo-800">Добавить навык линии</a>
+                </div>
+                @if($lineSkills->count() > 0)
+                    <div class="space-y-2">
+                        @foreach($lineSkills as $skill)
+                            <div class="flex items-center justify-between rounded border border-slate-200 px-3 py-2 text-sm text-slate-700">
+                                <div class="flex items-center gap-2">
+                                    <span class="rounded bg-indigo-50 px-2 py-0.5 text-indigo-700 font-semibold">{{ $skill->slot }}</span>
+                                    <span class="font-medium text-slate-800">{{ $skill->name }}</span>
+                                </div>
+                                <a href="{{ route('admin.line-skills.edit', $skill->id) }}" class="text-sm text-indigo-700 hover:text-indigo-800">Редактировать</a>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-slate-500">Навыков пока нет. Добавьте Q/W/Passive для ветки.</p>
+                @endif
+            </div>
+        @endif
 
         <div>
             <label class="block text-sm font-medium text-slate-700">Description</label>

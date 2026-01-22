@@ -6,139 +6,149 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-slate-900">{{ $isEdit ? 'Редактировать броню' : 'Добавить броню' }}</h1>
-        <p class="text-sm text-slate-600">{{ $isEdit ? 'Обновите атрибуты предмета.' : 'Добавьте предмет брони: выберите материал и слот; медиа — опционально.' }}</p>
+    <div class="section-header">
+        <div class="eyebrow">Админка брони</div>
+        <h1>{{ $isEdit ? 'Редактировать броню' : 'Добавить броню' }}</h1>
+        <p>{{ $isEdit ? 'Обновите атрибуты предмета.' : 'Добавьте предмет брони: выберите материал и слот; медиа — опционально.' }}</p>
     </div>
 
-    <form action="{{ $isEdit ? route('admin.armor-items.update', $item->id) : route('admin.armor-items.store') }}" method="POST" class="space-y-4 rounded-lg border border-slate-200 bg-white p-6">
+    <form action="{{ $isEdit ? route('admin.armor-items.update', $item->id) : route('admin.armor-items.store') }}" method="POST" class="panel" style="margin-top: 18px;">
         @csrf
         @if($isEdit)
             @method('PUT')
         @endif
 
-        <div class="grid md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-slate-700">Name</label>
-                <input name="name" value="{{ old('name', $item->name ?? '') }}" class="mt-1 w-full rounded border-slate-300" required>
-                @error('name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700">Slug</label>
-                <input name="slug" value="{{ old('slug', $item->slug ?? '') }}" placeholder="auto-generated if empty" class="mt-1 w-full rounded border-slate-300">
-                @error('slug')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-            </div>
+        <div class="subtle-title">Базовые данные</div>
+        <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 12px;">
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Название</span>
+                <input name="name" value="{{ old('name', $item->name ?? '') }}" required
+                       style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
+                @error('name')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+            </label>
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Slug</span>
+                <input name="slug" value="{{ old('slug', $item->slug ?? '') }}" placeholder="auto-generated if empty"
+                       style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
+                @error('slug')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+            </label>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-slate-700">Material</label>
-                <select name="material" class="mt-1 w-full rounded border-slate-300" required>
+        <div class="subtle-title" style="margin-top: 16px;">Категория</div>
+        <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 12px;">
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Материал</span>
+                <select name="material" required
+                        style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
                     @foreach(\App\Models\ArmorItem::MATERIALS as $material)
                         <option value="{{ $material }}" @selected(old('material', $item->material ?? null) === $material)>{{ \App\Models\ArmorItem::materialLabel($material) }}</option>
                     @endforeach
                 </select>
-                @error('material')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700">Slot</label>
-                <select name="slot" class="mt-1 w-full rounded border-slate-300" required>
+                @error('material')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+            </label>
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Слот</span>
+                <select name="slot" required
+                        style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
                     @foreach(\App\Models\ArmorItem::SLOTS as $slot)
                         <option value="{{ $slot }}" @selected(old('slot', $item->slot ?? null) === $slot)>{{ \App\Models\ArmorItem::slotLabel($slot) }}</option>
                     @endforeach
                 </select>
-                @error('slot')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-            </div>
+                @error('slot')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+            </label>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-slate-700">Enchantment (0-3)</label>
-            <input type="number" min="0" max="3" name="enchantment" value="{{ old('enchantment', isset($item) ? (int)$item->enchantment : 0) }}" class="mt-1 w-full rounded border-slate-300">
-            @error('enchantment')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+        <div class="subtle-title" style="margin-top: 16px;">Зачарование</div>
+        <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 12px;">
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Уровень (0-3)</span>
+                <input type="number" min="0" max="3" name="enchantment" value="{{ old('enchantment', isset($item) ? (int)$item->enchantment : 0) }}"
+                       style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
+                @error('enchantment')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+            </label>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-slate-700">Image URL</label>
-            <input name="image" value="{{ old('image', $item->image ?? '') }}" class="mt-1 w-full rounded border-slate-300">
-            @error('image')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-            @if(old('image') || (!empty($item->image)))
-                <div class="mt-3">
-                    <div class="text-xs text-slate-600 mb-1">Preview</div>
-                    <img src="{{ old('image', $item->image ?? '') }}" alt="Preview" class="max-h-48 rounded border border-slate-200">
-                </div>
-            @endif
+        <div class="subtle-title" style="margin-top: 16px;">Изображения</div>
+        <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 12px;">
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Image URL</span>
+                <input name="image" value="{{ old('image', $item->image ?? '') }}"
+                       style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
+                @error('image')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+                @if(old('image') || (!empty($item->image)))
+                    <div>
+                        <div class="meta">Preview</div>
+                        <img src="{{ old('image', $item->image ?? '') }}" alt="Preview" style="max-height: 180px; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 10px 26px var(--shadow);">
+                    </div>
+                @endif
+            </label>
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Icon URL (список/превью)</span>
+                <input name="icon" value="{{ old('icon', $item->icon ?? '') }}"
+                       style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
+                @error('icon')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+                @if(!empty($item->icon))
+                    <div>
+                        <div class="meta">Preview</div>
+                        <img src="{{ $item->icon }}" alt="Icon preview" style="max-height: 96px; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 10px 26px var(--shadow);">
+                    </div>
+                @endif
+            </label>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-slate-700">Icon URL (список/превью)</label>
-            <input name="icon" value="{{ old('icon', $item->icon ?? '') }}" class="mt-1 w-full rounded border-slate-300">
-            @error('icon')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-            @if(!empty($item->icon))
-                <div class="mt-3">
-                    <div class="text-xs text-slate-600 mb-1">Preview</div>
-                    <img src="{{ $item->icon }}" alt="Icon preview" class="max-h-24 rounded border border-slate-200">
-                </div>
-            @endif
+        <div class="subtle-title" style="margin-top: 16px;">Описание</div>
+        <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 12px;">
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Author Notes</span>
+                <textarea name="author_notes" rows="3"
+                          style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text); resize: vertical;">{{ old('author_notes', $item->author_notes ?? '') }}</textarea>
+                @error('author_notes')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+            </label>
+            <label class="card" style="display: grid; gap: 8px;">
+                <span class="meta">Description</span>
+                <textarea name="description" rows="4"
+                          style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text); resize: vertical;">{{ old('description', $item->description ?? '') }}</textarea>
+                @error('description')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
+            </label>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-slate-700">Author Notes</label>
-            <textarea name="author_notes" rows="3" class="mt-1 w-full rounded border-slate-300">{{ old('author_notes', $item->author_notes ?? '') }}</textarea>
-            @error('author_notes')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-slate-700">Description</label>
-            <textarea name="description" rows="4" class="mt-1 w-full rounded border-slate-300">{{ old('description', $item->description ?? '') }}</textarea>
-            @error('description')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button class="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700" type="submit">{{ $isEdit ? 'Update' : 'Save' }}</button>
-            <a href="{{ route('admin.armor-items.index') }}" class="text-sm text-slate-600 hover:text-slate-800">Cancel</a>
+        <div class="tags" style="margin-top: 16px;">
+            <button type="submit">{{ $isEdit ? 'Update' : 'Save' }}</button>
+            <a class="btn" href="{{ route('admin.armor-items.index') }}">Cancel</a>
             @if($isEdit)
-                <a href="{{ route('armor.show', $item->slug) }}" class="text-sm text-indigo-700 hover:text-indigo-800">View public</a>
+                <a class="btn" href="{{ route('armor.show', $item->slug) }}">View public</a>
             @endif
         </div>
     </form>
 
     @if($isEdit)
-        <div class="mt-8">
-            <div class="mb-4">
-                <h2 class="text-xl font-bold text-slate-900">Armor Skills</h2>
-                <p class="text-sm text-slate-600">Manage armor abilities and effects.</p>
+        <section class="panel" style="margin-top: 24px;">
+            <div class="subtle-title">Скиллы брони</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 6px;">
+                <h2 style="margin: 0;">Умения и эффекты</h2>
+                <a class="btn" style="padding: 10px 14px; font-size: 13px;" href="{{ route('admin.armor-skills.create', $item->id) }}">+ Добавить скилл</a>
             </div>
-
-            <div class="space-y-4">
-                @if($item->armorSkills && $item->armorSkills->count() > 0)
-                    @foreach($item->armorSkills as $skill)
-                        <div class="rounded-lg border border-slate-200 bg-white p-4">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <h3 class="font-semibold text-slate-900">{{ $skill->name }}</h3>
-                                    @if($skill->description)
-                                        <p class="text-sm text-slate-600 mt-1">{{ Str::limit($skill->description, 100) }}</p>
-                                    @endif
-                                </div>
-                                <div class="flex gap-2">
-                                    <a href="{{ route('admin.armor-skills.edit', $skill->id) }}" class="text-sm text-indigo-600 hover:text-indigo-800">Edit</a>
-                                    <form action="{{ route('admin.armor-skills.destroy', $skill->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-sm text-red-600 hover:text-red-800" onclick="return confirm('Delete this skill?')">Delete</button>
-                                    </form>
-                                </div>
-                            </div>
+            <div class="card-grid" style="margin-top: 12px;">
+                @forelse($item->armorSkills as $skill)
+                    <article class="card">
+                        <div class="meta">Навык</div>
+                        <h3 style="margin-top: 6px;">{{ $skill->name }}</h3>
+                        <p class="muted" style="margin-top: 6px;">
+                            {{ $skill->description ? Str::limit($skill->description, 100) : 'Описание пока не заполнено.' }}
+                        </p>
+                        <div class="tags" style="margin-top: 12px;">
+                            <a class="btn" style="padding: 8px 12px; font-size: 12px;" href="{{ route('admin.armor-skills.edit', $skill->id) }}">Редактировать</a>
+                            <form action="{{ route('admin.armor-skills.destroy', $skill->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Delete this skill?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn" style="padding: 8px 12px; font-size: 12px; border-color: rgba(248,113,113,0.5); color: #fecaca; background: linear-gradient(140deg, rgba(248,113,113,0.16), rgba(16,23,35,0.9));">Удалить</button>
+                            </form>
                         </div>
-                    @endforeach
-                @else
-                    <p class="text-sm text-slate-600">No skills added yet.</p>
-                @endif
-
-                <a href="{{ route('admin.armor-skills.create', $item->id) }}" class="inline-block rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
-                    + Add Skill
-                </a>
+                    </article>
+                @empty
+                    <p class="muted">Навыков пока нет. Добавьте первый.</p>
+                @endforelse
             </div>
-        </div>
+        </section>
     @endif
 @endsection

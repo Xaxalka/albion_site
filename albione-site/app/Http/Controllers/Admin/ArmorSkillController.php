@@ -10,12 +10,12 @@ use Illuminate\Http\UploadedFile;
 
 class ArmorSkillController extends Controller
 {
-    public function edit(int $armorId)
+    public function edit(int $skillId)
     {
-        $armor = ArmorItem::with('armorSkills.media')->findOrFail($armorId);
-        $skills = $armor->armorSkills;
+        $skill = ArmorSkill::with('media', 'armorItem')->findOrFail($skillId);
+        $armor = $skill->armorItem;
 
-        return view('admin.armor-skills.edit', compact('armor', 'skills'));
+        return view('admin.armor-skills.edit', compact('armor', 'skill'));
     }
 
     public function create(int $armorId)

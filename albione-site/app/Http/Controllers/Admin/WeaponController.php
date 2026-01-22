@@ -54,7 +54,7 @@ class WeaponController extends Controller
 
     public function edit(int $id)
     {
-        $weapon = Weapon::with('weaponSkill.media')->findOrFail($id);
+        $weapon = Weapon::with(['weaponSkill.media', 'weaponLine.lineSkills'])->findOrFail($id);
         $weaponLines = WeaponLine::orderBy('name')->get();
 
         return view('admin.weapons.edit', compact('weapon', 'weaponLines'));
