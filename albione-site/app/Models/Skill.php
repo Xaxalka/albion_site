@@ -5,39 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Weapon extends Model
+class Skill extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'branch_id',
-        'weapon_line_id',
+        'slot',
         'name',
-        'slug',
         'description',
-        'author_notes',
-        'image',
         'icon',
-        'enchantment',
-        'type',
+        'sort',
+        'is_placeholder',
     ];
 
     protected $casts = [
-        'enchantment' => 'integer',
+        'is_placeholder' => 'boolean',
     ];
-
-    public function weaponLine()
-    {
-        return $this->belongsTo(WeaponLine::class);
-    }
 
     public function branch()
     {
         return $this->belongsTo(Branch::class);
-    }
-
-    public function weaponSkill()
-    {
-        return $this->hasOne(WeaponSkill::class);
     }
 }

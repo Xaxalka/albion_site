@@ -56,7 +56,7 @@
                             <span class="admin-badge-blue">{{ $line->weapons_count ?? 0 }}</span>
                         </td>
                         <td class="admin-td" style="text-align: center;">
-                            <span class="admin-badge-green">{{ $line->line_skills_count ?? 0 }}</span>
+                            <span class="admin-badge-green">{{ $line->skills_count ?? 0 }}</span>
                         </td>
                         <td class="admin-td" style="color: #6b7280;">{{ $line->updated_at->format('d.m.Y') }}</td>
                         <td class="admin-td" style="text-align: right;">

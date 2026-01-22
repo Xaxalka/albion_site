@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Database\Seeders\ArmorSeeder;
+use Database\Seeders\BranchSkillPlaceholderSeeder;
 use Database\Seeders\WeaponSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -56,6 +57,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             WeaponSeeder::class,
+            BranchSkillPlaceholderSeeder::class,
             ArmorSeeder::class,
         ]);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\WeaponLine;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,7 +15,7 @@ class WeaponLineController extends Controller
     {
         $q = request('q');
 
-        $lines = WeaponLine::withCount(['weapons', 'lineSkills'])
+        $lines = WeaponLine::withCount(['weapons'])
             ->when($q, function ($query, $q) {
                 $query->where('name', 'like', "%{$q}%")
                       ->orWhere('slug', 'like', "%{$q}%");
@@ -22,6 +23,17 @@ class WeaponLineController extends Controller
             ->orderBy('name')
             ->paginate(9)
             ->appends(['q' => $q]);
+
+        $branchSkillCounts = Branch::whereIn('key', $lines->pluck('slug'))
+            ->withCount('skills')
+            ->get()
+            ->keyBy('key');
+
+        $lines->getCollection()->transform(function ($line) use ($branchSkillCounts) {
+            $line->skills_count = $branchSkillCounts->get($line->slug)?->skills_count ?? 0;
+
+            return $line;
+        });
 
         return view('admin.weapon-lines.index', compact('lines'));
     }
@@ -46,16 +58,25 @@ class WeaponLineController extends Controller
 
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);
 
-        WeaponLine::create($validated);
+        $line = WeaponLine::create($validated);
+        Branch::create([
+            'key' => $line->slug,
+            'name' => $line->name,
+            'description' => $line->description,
+        ]);
 
         return redirect()->route('admin.weapon-lines.index')->with('status', 'Weapon line created.');
     }
 
     public function edit(int $id)
     {
-        $line = WeaponLine::with('lineSkills')->findOrFail($id);
+        $line = WeaponLine::findOrFail($id);
+        $branch = $line->branch;
+        $skills = $branch
+            ? $branch->skills()->orderBy('sort')->get()
+            : collect();
 
-        return view('admin.weapon-lines.edit', compact('line'));
+        return view('admin.weapon-lines.edit', compact('line', 'skills'));
     }
 
     public function update(Request $request, int $id)
@@ -77,13 +98,29 @@ class WeaponLineController extends Controller
 
         $line->update($validated);
 
+        if ($line->branch) {
+            $line->branch->update([
+                'key' => $line->slug,
+                'name' => $line->name,
+                'description' => $line->description,
+            ]);
+        } else {
+            Branch::create([
+                'key' => $line->slug,
+                'name' => $line->name,
+                'description' => $line->description,
+            ]);
+        }
+
         return redirect()->route('admin.weapon-lines.index')->with('status', 'Weapon line updated.');
     }
 
     public function destroy(int $id)
     {
         $line = WeaponLine::findOrFail($id);
+        $branch = $line->branch;
         $line->delete();
+        $branch?->delete();
 
         return redirect()->route('admin.weapon-lines.index')->with('status', 'Weapon line deleted.');
     }

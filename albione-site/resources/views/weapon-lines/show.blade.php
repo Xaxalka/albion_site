@@ -13,20 +13,21 @@
 
 <section class="panel">
     <div class="subtle-title">Общие навыки</div>
-    <h2 style="margin-top:6px;">Q / W / Passive</h2>
+    <h2 style="margin-top:6px;">Q / W / E</h2>
     <div class="card-grid" style="margin-top:12px;">
-        @forelse($line->lineSkills as $skill)
+        @foreach(['Q','W','E'] as $slot)
             <article class="card">
-                <div class="meta">{{ $skill->slot }}</div>
-                <h3>{{ $skill->name }}</h3>
-                <p style="margin-top:6px;">{{ $skill->description }}</p>
-                @if($skill->author_notes)
-                    <p class="muted" style="margin-top:8px;">Заметки автора: {{ $skill->author_notes }}</p>
-                @endif
+                <div class="meta">{{ $slot }}</div>
+                @forelse($skillGroups[$slot] as $skill)
+                    <div style="margin-top:8px;">
+                        <h3>{{ $skill->name }}</h3>
+                        <p style="margin-top:6px;">{{ $skill->description }}</p>
+                    </div>
+                @empty
+                    <p class="muted">Нет навыков.</p>
+                @endforelse
             </article>
-        @empty
-            <p class="muted">Пока нет общих навыков для этой линии.</p>
-        @endforelse
+        @endforeach
     </div>
 </section>
 
@@ -36,9 +37,6 @@
     <div class="card-grid" style="margin-top:12px;">
         @forelse($line->weapons as $weapon)
             <article class="card">
-                @if($weapon->weaponSkill)
-                    <span class="chip">E: {{ $weapon->weaponSkill->name }}</span>
-                @endif
                 <h3 style="margin-top:10px;">
                     <a href="{{ route('weapons.show', $weapon->slug) }}" style="color:inherit; text-decoration:none;">{{ $weapon->name }}</a>
                 </h3>
