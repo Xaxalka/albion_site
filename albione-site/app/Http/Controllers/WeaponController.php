@@ -39,7 +39,7 @@ class WeaponController extends Controller
     public function show(string $slug, WeaponSkillService $weaponSkillService)
     {
         $weapon = Cache::remember("weapons.show:{$slug}", now()->addMinutes(10), function () use ($slug) {
-            return Weapon::with(['branch.skills', 'weaponLine'])
+            return Weapon::with(['branch.skills', 'weaponLine', 'weaponSkill.media'])
                 ->where('slug', $slug)
                 ->firstOrFail();
         });

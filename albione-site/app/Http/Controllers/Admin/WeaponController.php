@@ -7,6 +7,7 @@ use App\Models\Branch;
 use App\Models\Weapon;
 use App\Models\WeaponLine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class WeaponController extends Controller
@@ -54,7 +55,10 @@ class WeaponController extends Controller
             'description' => $line->description,
         ]);
 
-        Weapon::create(array_merge($validated, ['branch_id' => $branch->id]));
+        $weapon = Weapon::create(array_merge($validated, ['branch_id' => $branch->id]));
+
+        Cache::forget('weapons.index:all');
+        Cache::forget("weapons.index:line={$weapon->weapon_line_id}");
 
         return redirect()->route('admin.weapons.index')->with('status', 'Weapon created.');
     }
@@ -70,6 +74,8 @@ class WeaponController extends Controller
     public function update(Request $request, int $id)
     {
         $weapon = Weapon::findOrFail($id);
+        $oldLineId = $weapon->weapon_line_id;
+        $oldSlug = $weapon->slug;
 
         $validated = $request->validate([
             'weapon_line_id' => ['required', 'exists:weapon_lines,id'],
@@ -92,13 +98,25 @@ class WeaponController extends Controller
 
         $weapon->update(array_merge($validated, ['branch_id' => $branch->id]));
 
+        Cache::forget('weapons.index:all');
+        Cache::forget("weapons.index:line={$oldLineId}");
+        Cache::forget("weapons.index:line={$weapon->weapon_line_id}");
+        Cache::forget("weapons.show:{$oldSlug}");
+        Cache::forget("weapons.show:{$weapon->slug}");
+
         return redirect()->route('admin.weapons.index')->with('status', 'Weapon updated.');
     }
 
     public function destroy(int $id)
     {
         $weapon = Weapon::findOrFail($id);
+        $lineId = $weapon->weapon_line_id;
+        $slug = $weapon->slug;
         $weapon->delete();
+
+        Cache::forget('weapons.index:all');
+        Cache::forget("weapons.index:line={$lineId}");
+        Cache::forget("weapons.show:{$slug}");
 
         return redirect()->route('admin.weapons.index')->with('status', 'Weapon deleted.');
     }

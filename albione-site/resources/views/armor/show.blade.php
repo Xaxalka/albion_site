@@ -100,8 +100,8 @@
 
     <section class="panel" x-data="armorSkillPicker(@json($skillPayload))">
         <div class="subtle-title">Скиллы брони</div>
-        <div class="content-area" style="gap: 16px;">
-            <div class="card" style="flex: 1 1 260px;">
+        <div class="content-area">
+            <div class="card" x-show="activeSkill" x-transition>
                 <div class="meta">Выбор навыка</div>
                 <label class="muted" for="armorSkillSelect" style="display:block; margin-top:6px;">Выберите 1 из доступных навыков</label>
                 <select id="armorSkillSelect" x-model="activeSkillId" class="muted" style="margin-top:10px; width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background: var(--panel); color: #e5e7eb;">
@@ -109,35 +109,43 @@
                         <option :value="skill.id" x-text="skill.name"></option>
                     </template>
                 </select>
-            </div>
 
-            <div class="card" style="flex: 2 1 360px;" x-show="activeSkill" x-transition>
-                <div class="meta">Описание навыка</div>
-                <h3 style="margin-top:6px;" x-text="activeSkill?.name"></h3>
-                <p class="muted" style="margin-top:6px;" x-text="activeSkill?.description || 'Описание пока не заполнено.'"></p>
-                <template x-if="activeSkill?.author_notes">
-                    <p class="muted" style="margin-top:8px;">Заметки автора: <span x-text="activeSkill?.author_notes"></span></p>
-                </template>
-                <div style="margin-top:12px;">
-                    <template x-if="activeSkill?.preview">
-                        <div>
-                            <template x-if="activeSkill.preview.type === 'video' && isYoutube(activeSkill.preview.url)">
-                                <iframe :src="activeSkill.preview.url" title="YouTube video"
-                                        style="width:100%; height:280px; border-radius:12px; border:1px solid var(--line); box-shadow:0 10px 26px var(--shadow);"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowfullscreen></iframe>
-                            </template>
-                            <template x-if="activeSkill.preview.type === 'video' && !isYoutube(activeSkill.preview.url)">
-                                <video :src="activeSkill.preview.url" controls style="width:100%; max-height:280px; border-radius:12px; border:1px solid var(--line); box-shadow:0 10px 26px var(--shadow);"></video>
-                            </template>
-                            <template x-if="activeSkill.preview.type !== 'video'">
-                                <img :src="activeSkill.preview.url" :alt="activeSkill.preview.name" style="width:100%; max-height:280px; object-fit:contain; border-radius:12px; border:1px solid var(--line); box-shadow:0 10px 26px var(--shadow);">
-                            </template>
-                        </div>
-                    </template>
-                    <template x-if="!activeSkill?.preview">
-                        <p class="muted">Для навыка нет GIF/картинки.</p>
-                    </template>
+                <div class="skill-card" style="margin-top:16px;">
+                    <div class="skill-card__text">
+                        <h3 style="margin:0;" x-text="activeSkill?.name"></h3>
+                        <p class="muted" style="margin:0;" x-text="activeSkill?.description || 'Описание пока не заполнено.'"></p>
+                        <template x-if="activeSkill?.author_notes">
+                            <p class="muted" style="margin-top:8px;">Заметки автора: <span x-text="activeSkill?.author_notes"></span></p>
+                        </template>
+                    </div>
+                    <div class="skill-card__media">
+                        <template x-if="activeSkill?.preview">
+                            <div>
+                                <template x-if="activeSkill.preview.type === 'video' && isYoutube(activeSkill.preview.url)">
+                                    <div class="skill-card__frame">
+                                        <iframe :src="activeSkill.preview.url" title="YouTube video"
+                                                class="skill-card__asset"
+                                                width="500" height="500"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen></iframe>
+                                    </div>
+                                </template>
+                                <template x-if="activeSkill.preview.type === 'video' && !isYoutube(activeSkill.preview.url)">
+                                    <div class="skill-card__frame">
+                                        <video :src="activeSkill.preview.url" controls class="skill-card__asset" width="500" height="500"></video>
+                                    </div>
+                                </template>
+                                <template x-if="activeSkill.preview.type !== 'video'">
+                                    <div class="skill-card__frame">
+                                        <img :src="activeSkill.preview.url" :alt="activeSkill.preview.name" class="skill-card__asset" width="500" height="500">
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template x-if="!activeSkill?.preview">
+                            <p class="muted">Для навыка нет GIF/картинки.</p>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>

@@ -76,41 +76,113 @@
     </table>
 </section>
 
-<section class="panel">
-    <div class="subtle-title">Навыки ветки</div>
-    <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px;">
-        <div class="card">
+@php
+    $defaultTab = $weapon->weaponSkill ? 'e' : 'q';
+    $weaponSkill = $weapon->weaponSkill;
+    $preferredSkillMedia = $weaponSkill?->media->firstWhere('type', 'gif')
+        ?? $weaponSkill?->media->firstWhere('type', 'image')
+        ?? $weaponSkill?->media->firstWhere('type', 'video')
+        ?? $weaponSkill?->media->first();
+    $weaponSkillPreviewUrl = null;
+
+    if ($preferredSkillMedia) {
+        $weaponSkillPreviewUrl = $preferredSkillMedia->disk === 'url'
+            ? $preferredSkillMedia->path
+            : \Illuminate\Support\Facades\URL::temporarySignedRoute('media.show', now()->addMinutes(30), ['media' => $preferredSkillMedia]);
+    }
+@endphp
+<section class="panel" x-data="{ activeTab: '{{ $defaultTab }}' }" style="--skill-media-size: 500px;">
+    <div class="subtle-title">Навыки</div>
+    <div class="tags" style="margin-top:8px;">
+        <button type="button" class="chip" :style="activeTab === 'q' ? 'border-color: var(--gold-strong); box-shadow: 0 8px 18px rgba(242,200,124,0.18);' : ''" @click="activeTab = 'q'">Q</button>
+        <button type="button" class="chip" :style="activeTab === 'w' ? 'border-color: var(--gold-strong); box-shadow: 0 8px 18px rgba(242,200,124,0.18);' : ''" @click="activeTab = 'w'">W</button>
+        <button type="button" class="chip" :style="activeTab === 'e' ? 'border-color: var(--gold-strong); box-shadow: 0 8px 18px rgba(242,200,124,0.18);' : ''" @click="activeTab = 'e'">E</button>
+    </div>
+
+    <div class="content-area" style="margin-top:14px; gap:25px;">
+        <div class="card" x-show="activeTab === 'q'" x-transition>
             <div class="meta">Q</div>
             @forelse($skillGroups['qSkills'] as $skill)
-                <div style="margin-top:8px;">
-                    <h3>{{ $skill->name }}</h3>
-                    <p class="muted" style="margin-top:4px;">{{ $skill->description }}</p>
+                <div class="skill-card">
+                    <div class="skill-card__text">
+                        <h3 style="margin:0;">{{ $skill->name }}</h3>
+                        <p class="muted" style="margin:0;">{{ $skill->description }}</p>
+                    </div>
+                    @if($skill->icon)
+                        <div class="skill-card__media" style="width:350px; height:250px; max-width:350px; max-height:250px; min-width:350px; min-height:250px; margin-left:100px;">
+                            <div class="skill-card__frame" style="width:350px !important; height:250px !important; max-width:350px; max-height:250px; min-width:350px; min-height:250px; overflow:hidden;">
+                                <img src="{{ $skill->icon }}" alt="{{ $skill->name }}" class="skill-card__asset" width="350" height="250" style="width:100% !important; height:100% !important; object-fit:contain;">
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @empty
                 <p class="muted">Нет Q навыков.</p>
             @endforelse
         </div>
-        <div class="card">
+        <div class="card" x-show="activeTab === 'w'" x-transition>
             <div class="meta">W</div>
             @forelse($skillGroups['wSkills'] as $skill)
-                <div style="margin-top:8px;">
-                    <h3>{{ $skill->name }}</h3>
-                    <p class="muted" style="margin-top:4px;">{{ $skill->description }}</p>
+                <div class="skill-card">
+                    <div class="skill-card__text">
+                        <h3 style="margin:0;">{{ $skill->name }}</h3>
+                        <p class="muted" style="margin:0;">{{ $skill->description }}</p>
+                    </div>
+                    @if($skill->icon)
+                        <div class="skill-card__media" style="width:350px; height:250px; max-width:350px; max-height:250px; min-width:350px; min-height:250px; margin-left:100px;">
+                            <div class="skill-card__frame" style="width:350px !important; height:250px !important; max-width:350px; max-height:250px; min-width:350px; min-height:250px; overflow:hidden;">
+                                <img src="{{ $skill->icon }}" alt="{{ $skill->name }}" class="skill-card__asset" width="350" height="250" style="width:100% !important; height:100% !important; object-fit:contain;">
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @empty
                 <p class="muted">Нет W навыков.</p>
             @endforelse
         </div>
-        <div class="card">
+        <div class="card" x-show="activeTab === 'e'" x-transition>
             <div class="meta">E</div>
-            @forelse($skillGroups['eSkills'] as $skill)
-                <div style="margin-top:8px;">
-                    <h3>{{ $skill->name }}</h3>
-                    <p class="muted" style="margin-top:4px;">{{ $skill->description }}</p>
+            @if($weaponSkill)
+                <div class="skill-card">
+                    <div class="skill-card__text">
+                        <h3 style="margin:0;">{{ $weaponSkill->name }}</h3>
+                        <p class="muted" style="margin:0;">{{ $weaponSkill->description ?? 'Описание пока не заполнено.' }}</p>
+                    </div>
+                    <div class="skill-card__media" style="width:350px; height:250px; max-width:350px; max-height:250px; min-width:350px; min-height:250px; margin-left:100px;">
+                        @if($weaponSkillPreviewUrl)
+                            @php
+                                $isYoutube = \Illuminate\Support\Str::contains($weaponSkillPreviewUrl, ['youtube.com', 'youtu.be']);
+                            @endphp
+                            @if($preferredSkillMedia?->type === 'video' && $isYoutube)
+                                <div class="skill-card__frame" style="width:350px !important; height:250px !important; max-width:350px; max-height:250px; min-width:350px; min-height:250px; overflow:hidden;">
+                                    <iframe src="{{ $weaponSkillPreviewUrl }}" title="YouTube video"
+                                            class="skill-card__asset"
+                                            width="350" height="250"
+                                            style="width:100% !important; height:100% !important;"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen></iframe>
+                                </div>
+                            @elseif($preferredSkillMedia?->type === 'video')
+                                <div class="skill-card__frame" style="width:350px !important; height:250px !important; max-width:350px; max-height:250px; min-width:350px; min-height:250px; overflow:hidden;">
+                                    <video src="{{ $weaponSkillPreviewUrl }}" controls
+                                           class="skill-card__asset" width="350" height="250" style="width:100% !important; height:100% !important; object-fit:contain;"></video>
+                                </div>
+                            @else
+                                <div class="skill-card__frame" style="width:350px !important; height:250px !important; max-width:350px; max-height:250px; min-width:350px; min-height:250px; overflow:hidden;">
+                                    <img src="{{ $weaponSkillPreviewUrl }}" alt="{{ $weaponSkill->name }}" class="skill-card__asset" width="350" height="250" style="width:100% !important; height:100% !important; object-fit:contain;">
+                                </div>
+                            @endif
+                        @else
+                            <p class="muted">Для навыка нет GIF/картинки.</p>
+                        @endif
+                    </div>
                 </div>
-            @empty
-                <p class="muted">Нет E навыков.</p>
-            @endforelse
+                @if($weaponSkill->author_notes)
+                    <p class="muted" style="margin-top:8px;">Заметки автора: {{ $weaponSkill->author_notes }}</p>
+                @endif
+            @else
+                <p class="muted">Нет E навыка.</p>
+            @endif
         </div>
     </div>
 </section>

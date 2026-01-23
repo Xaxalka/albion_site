@@ -21,6 +21,7 @@
             --panel: #0d131f;
             --shadow: rgba(0, 0, 0, 0.45);
             --line: rgba(215, 182, 118, 0.35);
+            --skill-media-size: 500px;
         }
         * { box-sizing: border-box; }
         body {
@@ -183,6 +184,11 @@
         button:hover, .btn:hover { border-color: var(--gold-strong); box-shadow: 0 10px 24px rgba(242,200,124,0.2); transform: translateY(-1px); }
         .alert { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: rgba(242,200,124,0.08); color: #fff; }
         .footer { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 14px; text-align: center; }
+        .skill-card { margin-top: 8px; display: grid; grid-template-columns: minmax(0, 1fr) var(--skill-media-size); gap: 20px; align-items: start; }
+        .skill-card__text { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; }
+        .skill-card__media { width: var(--skill-media-size); max-width: var(--skill-media-size); min-width: var(--skill-media-size); }
+        .skill-card__frame { width: var(--skill-media-size) !important; height: var(--skill-media-size) !important; max-width: var(--skill-media-size); max-height: var(--skill-media-size); min-width: var(--skill-media-size); min-height: var(--skill-media-size); border-radius: 18px; overflow: hidden; }
+        .skill-card__asset { width: var(--skill-media-size) !important; height: var(--skill-media-size) !important; max-width: var(--skill-media-size); max-height: var(--skill-media-size); object-fit: cover; border: none; box-shadow: none; border-radius: 0; display: block; }
         @media (max-width: 720px) {
             .site-header { flex-direction: column; align-items: flex-start; }
         }

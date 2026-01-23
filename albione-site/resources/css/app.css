@@ -9,3 +9,43 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.skill-row {
+    margin-top: 8px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.skill-text {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.skill-media-col {
+    flex: 0 0 500px;
+    min-width: 500px;
+    margin-left: auto;
+}
+
+.skill-media-frame {
+    width: 500px;
+    height: 500px;
+    min-width: 500px;
+    min-height: 500px;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.skill-media {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    display: block;
+}

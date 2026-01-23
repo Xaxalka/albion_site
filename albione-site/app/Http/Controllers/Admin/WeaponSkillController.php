@@ -7,6 +7,7 @@ use App\Models\Weapon;
 use App\Models\WeaponSkill;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 
 class WeaponSkillController extends Controller
 {
@@ -35,6 +36,8 @@ class WeaponSkillController extends Controller
             : $weapon->weaponSkill()->create($validated);
 
         $this->storeMediaIfPresent($skill, $request);
+
+        Cache::forget("weapons.show:{$weapon->slug}");
 
         return redirect()->route('admin.weapons.edit', $weapon->id)->with('status', 'Unique E skill saved.');
     }
