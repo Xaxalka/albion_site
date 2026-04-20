@@ -15,11 +15,13 @@ class ArmorItem extends Model
 
     protected $fillable = [
         'name',
+        'name_ru',
         'slug',
         'enchantment',
         'material',
         'slot',
         'description',
+        'description_ru',
         'author_notes',
         'icon',
         'image',
@@ -31,22 +33,12 @@ class ArmorItem extends Model
 
     public static function materialLabel(string $material): string
     {
-        return match ($material) {
-            'cloth' => 'Ткань',
-            'leather' => 'Кожа',
-            'plate' => 'Латка',
-            default => $material,
-        };
+        return __('ui.armor.materials.'.$material);
     }
 
     public static function slotLabel(string $slot): string
     {
-        return match ($slot) {
-            'chest' => 'Тело',
-            'head' => 'Голова',
-            'feet' => 'Ноги',
-            default => $slot,
-        };
+        return __('ui.armor.slots.'.$slot);
     }
 
     /**
@@ -54,31 +46,33 @@ class ArmorItem extends Model
      */
     public static function pieceLabel(string $material, string $slot): string
     {
-        return match ($material) {
-            'cloth' => match ($slot) {
-                'chest' => 'Мантии',
-                'head' => 'Колпаки',
-                'feet' => 'Сандали',
-                default => self::slotLabel($slot),
-            },
-            'leather' => match ($slot) {
-                'chest' => 'Куртки',
-                'head' => 'Капюшоны',
-                'feet' => 'Сапоги',
-                default => self::slotLabel($slot),
-            },
-            'plate' => match ($slot) {
-                'chest' => 'Броня',
-                'head' => 'Шлемы',
-                'feet' => 'Ботинки',
-                default => self::slotLabel($slot),
-            },
-            default => self::slotLabel($slot),
-        };
+        $translation = __('ui.armor.pieces.'.$material.'.'.$slot);
+
+        return $translation === 'ui.armor.pieces.'.$material.'.'.$slot
+            ? self::slotLabel($slot)
+            : $translation;
     }
 
     public function armorSkills()
     {
         return $this->hasMany(ArmorSkill::class);
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        if (app()->getLocale() === 'ru' && filled($this->name_ru)) {
+            return $this->name_ru;
+        }
+
+        return $this->name;
+    }
+
+    public function getDisplayDescriptionAttribute(): ?string
+    {
+        if (app()->getLocale() === 'ru' && filled($this->description_ru)) {
+            return $this->description_ru;
+        }
+
+        return $this->description;
     }
 }

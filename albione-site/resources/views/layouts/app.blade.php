@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Albion Codex' }}</title>
+    <title>{{ $title ?? __('ui.site.name') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
@@ -82,14 +82,51 @@
             color: var(--gold-strong);
             font-size: 13px;
         }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
         .nav-links {
             display: flex;
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
         }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
         .nav-links form {
             margin: 0;
+        }
+        .locale-switcher {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(13,19,31,0.7);
+        }
+        .locale-switcher a {
+            padding: 8px 10px;
+            border-radius: 10px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            border: 1px solid transparent;
+        }
+        .locale-switcher a.is-active {
+            color: #fff;
+            border-color: var(--gold-strong);
+            background: rgba(242,200,124,0.12);
         }
         .nav-links__admin {
             background: linear-gradient(140deg, rgba(242,200,124,0.18), rgba(16,23,35,0.95));
@@ -191,6 +228,7 @@
         .skill-card__asset { width: var(--skill-media-size) !important; height: var(--skill-media-size) !important; max-width: var(--skill-media-size); max-height: var(--skill-media-size); object-fit: cover; border: none; box-shadow: none; border-radius: 0; display: block; }
         @media (max-width: 720px) {
             .site-header { flex-direction: column; align-items: flex-start; }
+            .header-actions { justify-content: flex-start; }
         }
     </style>
     @stack('styles')
@@ -198,34 +236,48 @@
 <body>
 <div class="page-shell">
     <header class="site-header">
-        <div class="crest">Albion Codex</div>
         @php
             $currentUser = $currentUser ?? auth()->user();
             $isAdmin = $isAdmin ?? (bool) $currentUser?->isAdmin();
+            $currentLocale = app()->getLocale();
         @endphp
-        <nav class="nav-links" aria-label="Главная навигация">
-            @if($isAdmin)
-                <a class="nav-links__admin" href="{{ route('admin.dashboard') }}">Админ-панель</a>
-            @endif
-            <a href="{{ route('wiki') }}">Главная</a>
-            <a href="{{ route('weapon-lines.index') }}">Ветки оружий</a>
-            <a href="{{ route('weapons.index') }}">Оружие</a>
-            <a href="{{ route('armor.index') }}">Броня</a>
-            @if($currentUser)
+        <div class="header-brand">
+            <div class="crest">{{ __('ui.site.name') }}</div>
+            <div class="locale-switcher" aria-label="{{ __('ui.site.language') }}">
+                @foreach(['en', 'ru'] as $locale)
+                    <a
+                        href="{{ route('locale.switch', ['locale' => $locale]) }}"
+                        class="{{ $currentLocale === $locale ? 'is-active' : '' }}"
+                    >{{ __('ui.locales.'.$locale) }}</a>
+                @endforeach
+            </div>
+        </div>
+        <div class="header-actions">
+            <nav class="nav-links" aria-label="{{ __('ui.nav.main') }}">
                 @if($isAdmin)
-                    <a href="{{ route('admin.weapon-lines.index') }}">Ветки (админ)</a>
-                    <a href="{{ route('admin.weapons.index') }}">Оружие (админ)</a>
-                    <a href="{{ route('admin.armor-items.index') }}">Броня (админ)</a>
+                    <a class="nav-links__admin" href="{{ route('admin.dashboard') }}">{{ __('ui.nav.admin') }}</a>
                 @endif
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit">Выйти ({{ $currentUser->name }})</button>
-                </form>
-            @else
-                <a href="{{ route('register') }}">Регистрация</a>
-                <a href="{{ route('login') }}">Войти</a>
-            @endif
-        </nav>
+                <a href="{{ route('wiki') }}">{{ __('ui.nav.home') }}</a>
+                <a href="{{ route('mobs.index') }}">{{ __('ui.nav.mobs') }}</a>
+                <a href="{{ route('weapon-lines.index') }}">{{ __('ui.nav.weapon_lines') }}</a>
+                <a href="{{ route('weapons.index') }}">{{ __('ui.nav.weapons') }}</a>
+                <a href="{{ route('armor.index') }}">{{ __('ui.nav.armor') }}</a>
+                @if($currentUser)
+                    @if($isAdmin)
+                        <a href="{{ route('admin.weapon-lines.index') }}">{{ __('ui.nav.admin_lines') }}</a>
+                        <a href="{{ route('admin.weapons.index') }}">{{ __('ui.nav.admin_weapons') }}</a>
+                        <a href="{{ route('admin.armor-items.index') }}">{{ __('ui.nav.admin_armor') }}</a>
+                    @endif
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit">{{ __('ui.nav.logout') }}</button>
+                    </form>
+                @else
+                    <a href="{{ route('register') }}">{{ __('ui.nav.register') }}</a>
+                    <a href="{{ route('login') }}">{{ __('ui.nav.login') }}</a>
+                @endif
+            </nav>
+        </div>
     </header>
 
     <main class="content-area">
@@ -236,7 +288,7 @@
         @yield('content')
     </main>
 
-    <footer class="footer">Albion Codex — фанатская база. Готово к расширению.</footer>
+    <footer class="footer">{{ __('ui.site.footer') }}</footer>
 </div>
 </body>
 </html>

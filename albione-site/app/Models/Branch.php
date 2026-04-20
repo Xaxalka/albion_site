@@ -19,4 +19,9 @@ class Branch extends Model
     {
         return $this->hasMany(Skill::class);
     }
+
+    public function weapons()
+    {
+        return $this->hasMany(Weapon::class);
+    }
 }

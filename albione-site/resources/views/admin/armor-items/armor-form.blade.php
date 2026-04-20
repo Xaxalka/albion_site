@@ -58,16 +58,6 @@
             </label>
         </div>
 
-        <div class="subtle-title" style="margin-top: 16px;">Зачарование</div>
-        <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 12px;">
-            <label class="card" style="display: grid; gap: 8px;">
-                <span class="meta">Уровень (0-3)</span>
-                <input type="number" min="0" max="3" name="enchantment" value="{{ old('enchantment', isset($item) ? (int)$item->enchantment : 0) }}"
-                       style="padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text);">
-                @error('enchantment')<span class="muted" style="color: #fca5a5;">{{ $message }}</span>@enderror
-            </label>
-        </div>
-
         <div class="subtle-title" style="margin-top: 16px;">Изображения</div>
         <div class="content-area" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 12px;">
             <label class="card" style="display: grid; gap: 8px;">

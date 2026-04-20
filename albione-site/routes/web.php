@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\WeaponLineController as AdminWeaponLineController
 use App\Http\Controllers\Admin\WeaponSkillController as AdminWeaponSkillController;
 use App\Http\Controllers\Api\MediaController as ApiMediaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MobController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SkillMediaController;
 use App\Http\Controllers\WikiController;
@@ -15,6 +16,14 @@ use App\Http\Controllers\WeaponController;
 use App\Http\Controllers\WeaponLineController;
 use App\Http\Controllers\ArmorController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/locale/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, ['en', 'ru'], true), 404);
+
+    session(['locale' => $locale]);
+
+    return redirect()->back();
+})->name('locale.switch');
 
 Route::get('/', function () {
     $user = auth()->user();
@@ -29,6 +38,8 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/wiki', [WikiController::class, 'index'])->name('wiki');
 
+    Route::get('/mobs', [MobController::class, 'index'])->name('mobs.index');
+    Route::get('/mobs/{slug}', [MobController::class, 'show'])->name('mobs.show');
     Route::get('/weapon-lines', [WeaponLineController::class, 'index'])->name('weapon-lines.index');
     Route::get('/weapon-lines/{slug}', [WeaponLineController::class, 'show'])->name('weapon-lines.show');
     Route::get('/weapons', [WeaponController::class, 'index'])->name('weapons.index');

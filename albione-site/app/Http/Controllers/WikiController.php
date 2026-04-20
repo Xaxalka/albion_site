@@ -9,35 +9,46 @@ class WikiController extends Controller
 {
     public function index(): View
     {
-        $data = Cache::remember('wiki.index', now()->addMinutes(30), function () {
+        $locale = app()->getLocale();
+
+        $data = Cache::remember("wiki.index:{$locale}", now()->addMinutes(30), function () use ($locale) {
+            $isRu = $locale === 'ru';
             $mobs = [
                 [
                     'name' => 'Morgana Knight',
                     'tier_range' => 'T6 – T8',
                     'skills' => ['Shield Bash', 'War Banner', 'Fiery Charge'],
                     'image' => 'https://render.albiononline.com/v1/item/Morgana_Knight.png',
-                    'description' => 'Элитный рыцарь Моргана, владеющий контролем толпы и усилениями группы.',
+                    'description' => $isRu
+                        ? 'Элитный рыцарь Моргана, владеющий контролем толпы и усилениями группы.'
+                        : 'An elite Morgana knight with crowd control and group buffs.',
                 ],
                 [
                     'name' => 'Undead Archer',
                     'tier_range' => 'T4 – T7',
                     'skills' => ['Piercing Shot', 'Deathly Arrows', 'Shadow Slip'],
                     'image' => 'https://render.albiononline.com/v1/item/Undead_Sniper.png',
-                    'description' => 'Дальний боец, накладывающий кровотечение и дебаффы брони.',
+                    'description' => $isRu
+                        ? 'Дальний боец, накладывающий кровотечение и дебаффы брони.'
+                        : 'A ranged fighter applying bleed and armor debuffs.',
                 ],
                 [
                     'name' => 'Avalonian Construct',
                     'tier_range' => 'T7 – T8',
                     'skills' => ['Crushing Leap', 'Light Beam', 'Sanctuary'],
                     'image' => 'https://render.albiononline.com/v1/item/Avalonian_Winged_Guardian.png',
-                    'description' => 'Массивный голем с сильными АоЕ атаками и защитным куполом.',
+                    'description' => $isRu
+                        ? 'Массивный голем с сильными АоЕ атаками и защитным куполом.'
+                        : 'A massive golem with strong AoE attacks and a defensive dome.',
                 ],
                 [
                     'name' => 'Keeper Bear',
                     'tier_range' => 'T4 – T8',
                     'skills' => ['Ground Slam', 'Feral Roar', 'Thick Hide'],
                     'image' => 'https://render.albiononline.com/v1/item/Keepers_Bear.png',
-                    'description' => 'Танк-существо Хранителей, отлично выдерживает урон и оглушает цели.',
+                    'description' => $isRu
+                        ? 'Танк-существо Хранителей, отлично выдерживает урон и оглушает цели.'
+                        : 'A tanky Keeper creature that soaks damage and stuns targets.',
                 ],
             ];
 
@@ -45,7 +56,7 @@ class WikiController extends Controller
                 [
                     'name' => 'Warrior Weapons',
                     'icon' => '🗡️',
-                    'summary' => 'Мечи, топоры и булавы, нацеленные на ближний бой и контроль.',
+                    'summary' => $isRu ? 'Мечи, топоры и булавы, нацеленные на ближний бой и контроль.' : 'Swords, axes, and maces built for melee combat and control.',
                     'q_skills' => [
                         ['name' => 'Heroic Strike', 'description' => 'Ускоряет и усиливает последующие атаки.', 'video' => 'https://www.youtube.com/embed/hbb-wYHAmX4'],
                         ['name' => 'Rending Swing', 'description' => 'Наносит кровотечение всем задетым врагам.', 'video' => 'https://www.youtube.com/embed/SqyK2BrqD5Q'],
@@ -64,7 +75,7 @@ class WikiController extends Controller
                 [
                     'name' => 'Hunter Weapons',
                     'icon' => '🏹',
-                    'summary' => 'Луки и копья для мобильности и урона с дистанции.',
+                    'summary' => $isRu ? 'Луки и копья для мобильности и урона с дистанции.' : 'Bows and spears for mobility and ranged damage.',
                     'q_skills' => [
                         ['name' => 'Deadly Shot', 'description' => 'Повышает урон с дистанции и пробивает броню.', 'video' => 'https://www.youtube.com/embed/97Zz-GcnfIk'],
                         ['name' => 'Forest of Spears', 'description' => 'Линия копий, наносящая урон и замедление.', 'video' => 'https://www.youtube.com/embed/8mlM6UfwGsU'],
@@ -83,7 +94,7 @@ class WikiController extends Controller
                 [
                     'name' => 'Mage Weapons',
                     'icon' => '🔮',
-                    'summary' => 'Посохи и магия дальнего боя с сильным контролем.',
+                    'summary' => $isRu ? 'Посохи и магия дальнего боя с сильным контролем.' : 'Staves and ranged magic with strong control.',
                     'q_skills' => [
                         ['name' => 'Fire Bolt', 'description' => 'Стреляет огненным зарядом, накладывающим горение.', 'video' => 'https://www.youtube.com/embed/Fe9QAMdJHPs'],
                         ['name' => 'Frost Bolt', 'description' => 'Замедляет врагов и наносит ледяной урон.', 'video' => 'https://www.youtube.com/embed/EjjXesqvGZ8'],
@@ -102,18 +113,18 @@ class WikiController extends Controller
             ];
 
             $armors = [
-                ['name' => 'Guardian Armor', 'type' => 'Plate', 'description' => 'Широкий щит для всей группы и высокий физический резист.', 'video' => 'https://www.youtube.com/embed/qm5C7T0jOXU'],
-                ['name' => 'Mage Robe', 'type' => 'Cloth', 'description' => 'Усиление урона и временная неуязвимость к контролю.', 'video' => 'https://www.youtube.com/embed/vfY3uPyK4Hs'],
-                ['name' => 'Mercenary Jacket', 'type' => 'Leather', 'description' => 'Самолечение от нанесённого урона, подходит для соло.', 'video' => 'https://www.youtube.com/embed/B5_4bMGkfq0'],
-                ['name' => 'Hellion Hood', 'type' => 'Leather', 'description' => 'Вампиризм по площади, полезно в PvP.', 'video' => 'https://www.youtube.com/embed/Lq9kJ3u1kMo'],
-                ['name' => 'Cleric Robe', 'type' => 'Cloth', 'description' => 'Дает неуязвимость и увеличенный урон после окончания.', 'video' => 'https://www.youtube.com/embed/0tGeRmgoQWg'],
+                ['name' => 'Guardian Armor', 'type' => 'Plate', 'description' => $isRu ? 'Широкий щит для всей группы и высокий физический резист.' : 'A broad shield for the whole group and strong physical resistance.', 'video' => 'https://www.youtube.com/embed/qm5C7T0jOXU'],
+                ['name' => 'Mage Robe', 'type' => 'Cloth', 'description' => $isRu ? 'Усиление урона и временная неуязвимость к контролю.' : 'Damage amplification and temporary crowd-control immunity.', 'video' => 'https://www.youtube.com/embed/vfY3uPyK4Hs'],
+                ['name' => 'Mercenary Jacket', 'type' => 'Leather', 'description' => $isRu ? 'Самолечение от нанесённого урона, подходит для соло.' : 'Self-healing from dealt damage, useful in solo play.', 'video' => 'https://www.youtube.com/embed/B5_4bMGkfq0'],
+                ['name' => 'Hellion Hood', 'type' => 'Leather', 'description' => $isRu ? 'Вампиризм по площади, полезно в PvP.' : 'Area lifesteal, valuable in PvP.', 'video' => 'https://www.youtube.com/embed/Lq9kJ3u1kMo'],
+                ['name' => 'Cleric Robe', 'type' => 'Cloth', 'description' => $isRu ? 'Дает неуязвимость и увеличенный урон после окончания.' : 'Grants invulnerability and increased damage after it ends.', 'video' => 'https://www.youtube.com/embed/0tGeRmgoQWg'],
             ];
 
             $contents = [
                 [
                     'name' => 'Stalker Corrupted Dungeon',
                     'icon' => 'https://render.albiononline.com/v1/item/T4_Cape%20ITEM.png',
-                    'description' => 'Соло PvP/PvE активность с вторжениями игроков и сокровищами.',
+                    'description' => $isRu ? 'Соло PvP/PvE активность с вторжениями игроков и сокровищами.' : 'A solo PvP/PvE activity with invasions and treasure.',
                     'gallery' => [
                         'https://assets.albiononline.com/uploads/media/default/media/638cc8a50d338716219900.jpg',
                         'https://assets.albiononline.com/uploads/media/default/media/611fc4c656b0a164431214.jpg',
@@ -122,7 +133,7 @@ class WikiController extends Controller
                 [
                     'name' => 'Avalonian Roads',
                     'icon' => 'https://render.albiononline.com/v1/item/T8_Bag.png',
-                    'description' => 'Извилистые дорожки для групп, где можно найти хейты, сундуки и данжи.',
+                    'description' => $isRu ? 'Извилистые дорожки для групп, где можно найти хейты, сундуки и данжи.' : 'Twisting group routes full of hides, chests, and dungeons.',
                     'gallery' => [
                         'https://assets.albiononline.com/uploads/media/default/media/5f1a0bc63f7a4421696362.jpg',
                         'https://assets.albiononline.com/uploads/media/default/media/5f1a0bc90d0d4421696364.jpg',
@@ -131,7 +142,7 @@ class WikiController extends Controller
                 [
                     'name' => 'Hellgates 2v2',
                     'icon' => 'https://render.albiononline.com/v1/item/T6_TOKEN_SPECIAL_FAME.png',
-                    'description' => 'Интенсивные дуэли пар в огненных аренах, сочетающие PvP и PvE.',
+                    'description' => $isRu ? 'Интенсивные дуэли пар в огненных аренах, сочетающие PvP и PvE.' : 'Intense 2v2 battles in fiery arenas combining PvP and PvE.',
                     'gallery' => [
                         'https://assets.albiononline.com/uploads/media/default/media/5fbdcb936e6de125306799.jpg',
                         'https://assets.albiononline.com/uploads/media/default/media/5fbdcb946e6de125306800.jpg',
@@ -142,27 +153,27 @@ class WikiController extends Controller
             $builds = [
                 [
                     'name' => 'Claymore Solo PvP',
-                    'description' => 'Мобильный дуэльный билд с мощным инициационным контролем.',
-                    'tags' => ['PvP', 'Solo', 'Burst'],
+                    'description' => $isRu ? 'Мобильный дуэльный билд с мощным инициационным контролем.' : 'A mobile dueling build with strong engage control.',
+                    'tags' => $isRu ? ['PvP', 'Соло', 'Взрывной урон'] : ['PvP', 'Solo', 'Burst'],
                 ],
                 [
                     'name' => 'Warbow Kiting',
-                    'description' => 'Стрельба с дистанции, замедления и безопасный урон.',
-                    'tags' => ['PvP', 'Solo', 'Kiting'],
+                    'description' => $isRu ? 'Стрельба с дистанции, замедления и безопасный урон.' : 'Ranged pressure, slows, and safe damage.',
+                    'tags' => $isRu ? ['PvP', 'Соло', 'Кайт'] : ['PvP', 'Solo', 'Kiting'],
                 ],
                 [
                     'name' => 'Holy Staff Group Heal',
-                    'description' => 'Поддержка группы с сильным исцелением и зачисткой дебаффов.',
-                    'tags' => ['PvE', 'Group', 'Support'],
+                    'description' => $isRu ? 'Поддержка группы с сильным исцелением и зачисткой дебаффов.' : 'Group support with strong healing and cleanse utility.',
+                    'tags' => $isRu ? ['PvE', 'Группа', 'Поддержка'] : ['PvE', 'Group', 'Support'],
                 ],
                 [
                     'name' => 'Greataxe Fame Farm',
-                    'description' => 'Быстрый зачистной билд для сплит-пулов и фарма серебра.',
-                    'tags' => ['PvE', 'Group', 'Farm'],
+                    'description' => $isRu ? 'Быстрый зачистной билд для сплит-пулов и фарма серебра.' : 'A fast-clearing setup for split pulls and silver farming.',
+                    'tags' => $isRu ? ['PvE', 'Группа', 'Фарм'] : ['PvE', 'Group', 'Farm'],
                 ],
                 [
                     'name' => 'Cursed Skull ZvZ',
-                    'description' => 'Массовый урон по площади и проклятия для больших боев.',
+                    'description' => $isRu ? 'Массовый урон по площади и проклятия для больших боев.' : 'Large-scale AoE damage and curses for big fights.',
                     'tags' => ['PvP', 'Group', 'ZvZ'],
                 ],
             ];

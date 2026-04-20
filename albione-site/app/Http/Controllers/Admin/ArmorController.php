@@ -35,7 +35,6 @@ class ArmorController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:armor_items,slug'],
-            'enchantment' => ['nullable', 'integer', 'min:0', 'max:3'],
             'material' => ['required', 'in:cloth,leather,plate'],
             'slot' => ['required', 'in:chest,head,feet'],
             'description' => ['nullable', 'string'],
@@ -45,7 +44,6 @@ class ArmorController extends Controller
         ]);
 
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);
-        $validated['enchantment'] = $validated['enchantment'] ?? 0;
 
         ArmorItem::create($validated);
 
@@ -66,7 +64,6 @@ class ArmorController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:armor_items,slug,' . $item->id],
-            'enchantment' => ['nullable', 'integer', 'min:0', 'max:3'],
             'material' => ['required', 'in:cloth,leather,plate'],
             'slot' => ['required', 'in:chest,head,feet'],
             'description' => ['nullable', 'string'],
@@ -76,7 +73,6 @@ class ArmorController extends Controller
         ]);
 
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);
-        $validated['enchantment'] = $validated['enchantment'] ?? 0;
 
         $item->update($validated);
 

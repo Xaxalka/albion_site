@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ru">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Albion Codex</title>
+    <title>{{ __('ui.site.name') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
@@ -328,65 +328,124 @@
             content: "⇣";
             color: var(--gold-strong);
         }
+        .cta-stack {
+            display: grid;
+            gap: 12px;
+            width: 100%;
+            max-width: 1080px;
+            margin-top: 12px;
+        }
         .cta-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 10px;
             width: 100%;
-            max-width: 620px;
-            margin-top: 10px;
+        }
+        .cta-admin {
+            display: flex;
+            justify-content: center;
+            width: 100%;
         }
         .cta-link {
             display: inline-flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 10px;
             padding: 12px 14px;
             border-radius: 14px;
-            border: 1px solid var(--line);
+            border: 2px solid var(--line);
             background: linear-gradient(140deg, rgba(242,200,124,0.14), rgba(16,23,35,0.9));
             color: #fff;
-            font-weight: 700;
+            font-weight: 650;
             letter-spacing: 0.02em;
             text-decoration: none;
             box-shadow: 0 10px 26px var(--shadow);
             transition: 160ms ease;
+            text-align: center;
         }
-        .cta-link span { color: var(--muted); font-size: 13px; font-weight: 600; }
+        .cta-link--admin {
+            min-width: 240px;
+            justify-content: center;
+            text-align: center;
+        }
         .cta-link:hover { border-color: var(--gold-strong); transform: translateY(-1px); box-shadow: 0 12px 30px rgba(242,200,124,0.22); }
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 18px;
+        }
+        .locale-switcher {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(13,19,31,0.78);
+            box-shadow: 0 10px 24px var(--shadow);
+        }
+        .locale-switcher a {
+            padding: 8px 10px;
+            border-radius: 10px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            border: 1px solid transparent;
+        }
+        .locale-switcher a.is-active {
+            color: #fff;
+            border-color: var(--gold-strong);
+            background: rgba(242,200,124,0.12);
+        }
         @media (max-width: 700px) {
             .tab-bar { top: 10px; grid-template-columns: 1fr; max-width: 420px; }
             .tab { font-size: 14px; padding: 12px 14px; min-height: 70px; }
             .sigil-title { font-size: 20px; }
+            .cta-bar { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 <div class="page">
+    <div class="topbar">
+        <div class="locale-switcher" aria-label="{{ __('ui.site.language') }}">
+            @foreach(['en', 'ru'] as $locale)
+                <a href="{{ route('locale.switch', ['locale' => $locale]) }}" class="{{ app()->getLocale() === $locale ? 'is-active' : '' }}">{{ __('ui.locales.'.$locale) }}</a>
+            @endforeach
+        </div>
+    </div>
     <header class="hero">
-        <div class="hero__crest">Albion Codex — Дом Русской Гильдии</div>
-        <h1 class="hero__title">Главная страница фанатской wiki Albion Online</h1>
-        <p class="hero__subtitle">Тёмная атмосфера средневековья, быстрые разделы и герои, которых ждут новые легенды. Навигация остаётся под рукой — выберите вкладку, чтобы загрузить нужную часть базы знаний.</p>
+        <div class="hero__crest">{{ __('ui.wiki.crest') }}</div>
+        <h1 class="hero__title">{{ __('ui.wiki.hero_title') }}</h1>
+        <p class="hero__subtitle">{{ __('ui.wiki.hero_subtitle') }}</p>
 
         <div id="tabBar" class="tab-bar">
-            <button class="tab active" data-tab="mobs">Мобы <span>Угроза земель</span></button>
-            <button class="tab" data-tab="gear">Снаряжение <span>Сталь и ткань</span></button>
-            <button class="tab" data-tab="content">Контент <span>Приключения</span></button>
-            <button class="tab" data-tab="builds">Билды <span>Тактика</span></button>
+            <button class="tab active" data-tab="mobs">{{ __('ui.wiki.tabs.mobs.label') }} <span>{{ __('ui.wiki.tabs.mobs.sub') }}</span></button>
+            <button class="tab" data-tab="gear">{{ __('ui.wiki.tabs.gear.label') }} <span>{{ __('ui.wiki.tabs.gear.sub') }}</span></button>
+            <button class="tab" data-tab="content">{{ __('ui.wiki.tabs.content.label') }} <span>{{ __('ui.wiki.tabs.content.sub') }}</span></button>
+            <button class="tab" data-tab="builds">{{ __('ui.wiki.tabs.builds.label') }} <span>{{ __('ui.wiki.tabs.builds.sub') }}</span></button>
         </div>
 
-        <nav class="cta-bar" aria-label="Быстрый переход по разделам">
-            <a class="cta-link" href="{{ route('weapon-lines.index') }}">Ветки оружий <span>Ветки и умения</span></a>
-            <a class="cta-link" href="{{ route('weapons.index') }}">Оружие <span>Каталог и фильтры</span></a>
-            <a class="cta-link" href="{{ route('wiki') }}#builds">Билды <span>Сборки по ролям</span></a>
+        <div class="cta-stack">
+            <nav class="cta-bar" aria-label="{{ __('ui.wiki.quick_nav') }}">
+                <a class="cta-link" href="{{ route('mobs.index') }}">{{ __('ui.nav.mobs') }}</a>
+                <a class="cta-link" href="{{ route('weapon-lines.index') }}">{{ __('ui.nav.weapon_lines') }}</a>
+                <a class="cta-link" href="{{ route('weapons.index') }}">{{ __('ui.nav.weapons') }}</a>
+                <a class="cta-link" href="{{ route('armor.index') }}">{{ __('ui.nav.armor') }}</a>
+                <a class="cta-link" href="{{ route('wiki') }}#builds">{{ __('ui.wiki.builds') }}</a>
+            </nav>
             @if(Auth::user()?->is_admin)
-                <a class="cta-link" href="{{ route('admin.weapons.index') }}">Админка <span>Управление данными</span></a>
+                <div class="cta-admin">
+                    <a class="cta-link cta-link--admin" href="{{ route('admin.dashboard') }}">{{ __('ui.wiki.admin') }}</a>
+                </div>
             @endif
-        </nav>
+        </div>
     </header>
 
     <main class="layout-grid">
-        <section class="sigils" aria-label="Герои гильдии">
+        <section class="sigils" aria-label="{{ __('ui.wiki.guild.heroes') }}">
             <div class="sigil-card">
                 <div class="sigil-rune">Rune • North</div>
                 <h3 class="sigil-title">Xaxalka</h3>
@@ -411,20 +470,38 @@
 
         <section class="content-panel" aria-live="polite">
             <div class="content-placeholder">
-                <h3 id="contentTitle">Мобы — обзор угроз</h3>
-                <p id="contentText">Выберите раздел для просмотра информации: данные загрузятся в эту область и сохранят атмосферу темного Albion Online.</p>
+                <h3 id="contentTitle">{{ __('ui.wiki.panels.mobs_title') }}</h3>
+                <p id="contentText">{{ __('ui.wiki.panels.mobs_text') }}</p>
             </div>
             <div class="content-actions" id="contentActions">
-                <span class="chip">Категория: Мобы</span>
-                <span class="chip">Стиль: Темное фэнтези</span>
+                <span class="chip">{{ __('ui.wiki.chips.mobs_category') }}</span>
+                <span class="chip">{{ __('ui.wiki.chips.mobs_style') }}</span>
             </div>
             <div id="contentArea" class="content-body" aria-label="Динамический контент"></div>
-            <div class="scroll-hint">Навигация закрепится сверху при прокрутке.</div>
+            <div class="scroll-hint">{{ __('ui.wiki.scroll_hint') }}</div>
         </section>
     </main>
 </div>
 
 <script>
+    const wikiText = {
+        qSkills: @json(__('ui.wiki.q_skills')),
+        wSkills: @json(__('ui.wiki.w_skills')),
+        passive: @json(__('ui.wiki.passive')),
+        mobsTitle: @json(__('ui.wiki.panels.mobs_title')),
+        mobsText: @json(__('ui.wiki.panels.mobs_text')),
+        mobsChips: @json([__('ui.wiki.chips.mobs_category'), __('ui.wiki.chips.mobs_style')]),
+        gearTitle: @json(__('ui.wiki.panels.gear_title')),
+        gearText: @json(__('ui.wiki.panels.gear_text')),
+        gearChips: @json([__('ui.wiki.chips.gear_category'), __('ui.wiki.chips.gear_style')]),
+        contentTitle: @json(__('ui.wiki.panels.content_title')),
+        contentText: @json(__('ui.wiki.panels.content_text')),
+        contentChips: @json([__('ui.wiki.chips.content_category'), __('ui.wiki.chips.content_style')]),
+        buildsTitle: @json(__('ui.wiki.panels.builds_title')),
+        buildsText: @json(__('ui.wiki.panels.builds_text')),
+        buildsChips: @json([__('ui.wiki.chips.builds_category'), __('ui.wiki.chips.builds_style')]),
+    };
+
     const mobsData = @json($mobs);
     const gearData = {
         branches: @json($weaponBranches),
@@ -472,9 +549,9 @@
                     </div>
                 </div>
                 <div class="branch-grid">
-                    <div><strong>Q навыки:</strong> ${branch.q_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
-                    <div><strong>W навыки:</strong> ${branch.w_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
-                    <div><strong>Пассив:</strong> ${escapeHtml(branch.passive.name)}</div>
+                    <div><strong>${escapeHtml(wikiText.qSkills)}:</strong> ${branch.q_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
+                    <div><strong>${escapeHtml(wikiText.wSkills)}:</strong> ${branch.w_skills.map(skill => escapeHtml(skill.name)).join(', ')}</div>
+                    <div><strong>${escapeHtml(wikiText.passive)}:</strong> ${escapeHtml(branch.passive.name)}</div>
                 </div>
                 <div class="variants-row">
                     ${branch.variants.map(variant => `
@@ -525,27 +602,27 @@
 
     const tabContent = {
         mobs: {
-            title: 'Мобы — обзор угроз',
-            text: 'Подборки боссов, рейдовых монстров и их умения обновятся сразу после выбора вкладки.',
-            chips: ['Категория: Мобы', 'Тактика: Контроль и уклонение'],
+            title: wikiText.mobsTitle,
+            text: wikiText.mobsText,
+            chips: wikiText.mobsChips,
             renderer: renderMobs,
         },
         gear: {
-            title: 'Снаряжение — кузница силы',
-            text: 'Просматривайте уникальные сетовые бонусы, сравнивайте артефактные предметы и собирайте собственные комплекты.',
-            chips: ['Категория: Снаряжение', 'Стили: Пластина, кожа, ткань'],
+            title: wikiText.gearTitle,
+            text: wikiText.gearText,
+            chips: wikiText.gearChips,
             renderer: renderGear,
         },
         content: {
-            title: 'Контент — где искать славу',
-            text: 'Данжи, дороги Авалона, вторжения и особые события появятся в этом блоке с картами и мини-галереей.',
-            chips: ['Категория: Контент', 'Режимы: PvE и PvP'],
+            title: wikiText.contentTitle,
+            text: wikiText.contentText,
+            chips: wikiText.contentChips,
             renderer: renderContents,
         },
         builds: {
-            title: 'Билды — стратегии и роли',
-            text: 'Фильтруйте по ролям и активности: соло PvP, группы, или масштабные ZvZ. Заглушка готова принять ваши сетапы.',
-            chips: ['Категория: Билды', 'Фокус: Роли и навыки'],
+            title: wikiText.buildsTitle,
+            text: wikiText.buildsText,
+            chips: wikiText.buildsChips,
             renderer: renderBuilds,
         },
     };

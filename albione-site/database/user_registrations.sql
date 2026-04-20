@@ -6,3 +6,4 @@ INSERT INTO users (name, email, username, password, created_at, updated_at) VALU
 INSERT INTO users (name, email, password, created_at, updated_at) VALUES ('Xaxalka', 'xaxalka123@gmail.com', '$2y$12$9BfnzlW1l0F1TVVQLDPi7eRSL9JNQBEY8Beoh0aEkTfN5h.4w12PC', '2025-12-23 22:08:57', '2025-12-23 22:08:57');
 INSERT INTO users (name, email, password, created_at, updated_at) VALUES ('Prime', 'admin@local.test', '$2y$12$FVcyPcToFvlXGnV.4suweeEsQNotpAjU8njfivgJOs8P5zFrq4X/W', '2026-01-06 06:42:18', '2026-01-06 06:42:18');
 INSERT INTO users (name, email, password, created_at, updated_at) VALUES ('фыв', 'asdasdsd@gmail.com', '$2y$12$lkT.YFwzaC3I5jWNCMlPiu5lnY2vawDGHdJ0cRqvW2oczDp7C2mfy', '2026-01-12 12:24:07', '2026-01-12 12:24:07');
+INSERT INTO users (name, email, password, created_at, updated_at) VALUES ('sdds', 'test@example.com1', '$2y$12$fhrG8mEbaSHx..VUUFvLROdTM1gc0fGd2GNjZSTTnigdeYRPuiV8K', '2026-04-20 07:18:09', '2026-04-20 07:18:09');

@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function create(): View
     {
-        return view('auth.login', ['title' => 'Вход в аккаунт']);
+        return view('auth.login', ['title' => __('ui.auth.login_title')]);
     }
 
     public function store(LoginRequest $request): RedirectResponse
@@ -42,7 +42,7 @@ class AuthController extends Controller
             ]);
 
             return back()
-                ->withErrors(['login' => 'Неверный логин или пароль'])
+                ->withErrors(['login' => __('ui.auth.invalid_credentials')])
                 ->onlyInput('login');
         }
 
@@ -60,7 +60,7 @@ class AuthController extends Controller
 
         return redirect()
             ->intended($redirectRoute)
-            ->with('status', 'Добро пожаловать!');
+            ->with('status', __('ui.auth.welcome_back'));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -76,6 +76,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('status', 'Вы вышли из системы.');
+        return redirect()->route('login')->with('status', __('ui.auth.logged_out'));
     }
 }

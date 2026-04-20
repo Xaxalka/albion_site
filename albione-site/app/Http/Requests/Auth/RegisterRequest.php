@@ -24,7 +24,7 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.unique' => 'Ошибка, почта не существует.',
+            'email.unique' => __('validation.unique', ['attribute' => __('ui.auth.email')]),
         ];
     }
 

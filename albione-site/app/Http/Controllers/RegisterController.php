@@ -17,7 +17,7 @@ class RegisterController extends Controller
     public function create(): View
     {
         return view('auth.register', [
-            'title' => 'Регистрация',
+            'title' => __('ui.auth.register_title'),
         ]);
     }
 
@@ -48,7 +48,7 @@ class RegisterController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(route('wiki'))
-            ->with('status', 'Регистрация прошла успешно. Добро пожаловать!');
+            ->with('status', __('ui.auth.registered'));
     }
 
     private function writeSqlRecord(array $attributes, User $user): void
