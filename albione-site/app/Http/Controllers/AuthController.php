@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\EnsureAdmin;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-
     public function create(): View
     {
         return view('auth.login', ['title' => __('ui.auth.login_title')]);
@@ -54,13 +55,26 @@ class AuthController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        $redirectRoute = auth()->user()?->isAdmin()
-            ? route('admin.dashboard')
-            : route('wiki');
+        if (auth()->user()?->isAdmin()) {
+            return redirect()
+                ->to($this->adminDashboardRoute($request))
+                ->with('status', __('ui.auth.welcome_back'));
+        }
 
         return redirect()
-            ->intended($redirectRoute)
+            ->intended(route('wiki'))
             ->with('status', __('ui.auth.welcome_back'));
+    }
+
+    private function adminDashboardRoute(Request $request): string
+    {
+        $accessKey = Str::random(40);
+
+        $request->session()->put(EnsureAdmin::ACCESS_KEY_SESSION, $accessKey);
+
+        return route('admin.dashboard', [
+            EnsureAdmin::ROUTE_PARAMETER => $accessKey,
+        ]);
     }
 
     public function destroy(Request $request): RedirectResponse

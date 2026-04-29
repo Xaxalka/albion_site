@@ -28,7 +28,7 @@ test('seeded admin can login using the provided credentials', function () {
         'password' => 'asddsa123321',
     ]);
 
-    $response->assertRedirect(route('wiki'));
+    expect($response->headers->get('Location'))->toMatch('#/admin/[A-Za-z0-9]{40}$#');
     $this->assertAuthenticatedAs($admin);
 });
 
@@ -40,6 +40,32 @@ test('seeded admin login trims accidental whitespace', function () {
         'password' => '  asddsa123321  ',
     ]);
 
-    $response->assertRedirect(route('wiki'));
+    expect($response->headers->get('Location'))->toMatch('#/admin/[A-Za-z0-9]{40}$#');
     $this->assertAuthenticatedAs($admin);
+});
+
+test('admin panel rejects direct fixed admin url', function () {
+    $admin = User::where('email', 'xaxalka@example.com')->first();
+
+    $this->actingAs($admin)
+        ->get('/admin')
+        ->assertNotFound();
+});
+
+test('admin panel requires current session access key', function () {
+    $admin = User::where('email', 'xaxalka@example.com')->first();
+
+    $response = $this->post(route('login.store'), [
+        'login' => 'xaxalka',
+        'password' => 'asddsa123321',
+    ]);
+
+    $adminUrl = $response->headers->get('Location');
+
+    $dashboardResponse = $this->get($adminUrl);
+
+    $dashboardResponse->assertRedirect();
+    expect($dashboardResponse->headers->get('Location'))->toMatch('#/admin/[A-Za-z0-9]{40}/weapon-lines$#');
+    $this->get($dashboardResponse->headers->get('Location'))->assertOk();
+    $this->get('/admin/'.str_repeat('a', 40))->assertNotFound();
 });
